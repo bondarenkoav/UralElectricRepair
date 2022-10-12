@@ -1,0 +1,41 @@
+{% load dashboard_tags mptt_tags %}
+
+<div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+    <div class="menu_section">
+        <ul class="nav side-menu">
+            {% if nodes %}
+                {% recursetree nodes %}
+                    {% if node.is_root_node %}                  <!-- если это корневой узел -->
+                        {% if not node.is_leaf_node %}          <!-- если это не элемент -->
+                            <li>
+                                <a><i class="fa {{ node.icon }}"></i> {{ node.name }} <span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    {{ children }}
+                                </ul>
+                            </li>
+                        {% else %}                              <!-- если это элемент -->
+                            <li>
+                                <a href="/{{ node.slug }}/">{{ node.name }}</a>
+                                {{ children }}
+                            </li>
+                        {% endif %}
+                    {% else %}                                  <!-- если это не корневой узел -->
+                        {% if node.is_leaf_node %}              <!-- если это элемент -->
+                            <li>
+                                <a href="/{{ node.get_root.slug }}/{{ node.slug }}/">{{ node.name }}</a>
+                                {{ children }}
+                            </li>
+                        {% else %}                              <!-- если это узел -->
+                            <li>
+                                <a href="#" aria-expanded="true">{{ node.name }}</a>
+                                <ul class="collapse">
+                                    {{ children }}
+                                </ul>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                {% endrecursetree %}
+            {% endif %}
+        </ul>
+    </div>
+</div>

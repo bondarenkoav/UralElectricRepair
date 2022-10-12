@@ -1,0 +1,30 @@
+{% load bootstrap4 %}
+
+<table class="table table-sm">
+    {{ formset.management_form }}
+    {% for form in formset.forms %}
+        {% if forloop.first %}
+            <thead>
+                <tr class="text-center">
+                    {% for field in form.visible_fields %}
+                        <th>{{ field.label|capfirst }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+        {% endif %}
+        <tr class="formset_row">
+            {% for field in form.visible_fields %}
+                <td>
+                    {# Include the hidden fields in the form #}
+                    {% if forloop.first %}
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+                    {% endif %}
+                    {% bootstrap_form_errors form %}
+                    {% bootstrap_field field layout='inline' %}
+                </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>

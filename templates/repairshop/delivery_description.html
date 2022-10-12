@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static bootstrap4 %}
+
+{% block page_title %}Поставка оборудования <small>№{{ shipment.specificationnum }} от {{ shipment.dateshipment|date:"d.m.Y" }}</small>{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <div class="row">
+                        <div class="col-8">
+                            <ul class="list-inline">
+                                <li class="list-inline-item">Филиал: {{ shipment.branch }}</li>
+                                <li class="list-inline-item">
+                                    <i class="fa fa-plus-square-o" aria-hidden="true"></i> {{ shipment.create_user }}|{{ shipment.datetime_add|date:"d.m.Y" }}
+                                </li>
+                                <li class="list-inline-item">
+                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i> {{ shipment.update_user }}|{{ shipment.datetime_update|date:"d.m.Y" }}
+                                </li>
+                            </ul>
+                            <dl class="row">
+                                <dt class="col-sm-3">Номер спецификации</dt><dd class="col-sm-9">{{ shipment.specificationnum }}</dd>
+                                <dt class="col-sm-3">Дата поставки</dt><dd class="col-sm-9">{{ shipment.dateshipment|date:"d.m.Y" }}</dd>
+                                <dt class="col-sm-3">Контрагент</dt><dd class="col-sm-9">{{ shipment.client }}</dd>
+                            </dl>
+                        </div>
+                        <div class="col-4">
+                            <img src="{% if shipment.photo %}{{ shipment.photo.url }}{% else %}{% static 'images/no_image.jpeg' %}{% endif %}" alt="фото поставки" style="width: 100%; max-height: 150px;" />
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                <div class="x_content">
+                    <div class="h3">Состав поставки</div>
+                    <table class="table  table-striped">
+                        <thead>
+                            <tr class="text-center">
+                                <th style="width: 5%">#</th>
+                                <th style="width: 10%">Ремонтный номер</th>
+                                <th style="width: 25%">Оборудование</th>
+                                <th style="width: 10%">Участок</th>
+                                <th style="width: 10%">Статус</th>
+                                <th style="width: 10%">Дата готовности</th>
+                                <th style="width: 10%">Добавлено</th>
+                                <th style="width: 10%">Обновлено</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in scshipment %}
+                                <tr>
+                                    <td class="text-center">{{ forloop.counter }}</td>
+                                    <th class="text-center">{{ item.repairnum }}</th>
+                                    <td>{{ item.equipment.name }}</td>
+                                    <td class="text-center">
+                                        {% if item.section == 'upto100kvt' %}До 100 кВт
+                                        {% elif item.section == 'from100kvt' %}От 100 кВт
+                                        {% else %}Прочие
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">{{ item.status }}</td>
+                                    <td class="text-center">{% if item.dateready %}{{ item.dateready }}{% else %}в работе{% endif %}</td>
+                                    <td class="text-center"><small>{% if item.create_user %}{{ item.create_user }}<br/>{% endif %}{{ item.datetime_add|date:"d.m.Y" }}</small></td>
+                                    <td class="text-center"><small>{% if item.update_user %}{{ item.update_user }}<br/>{% endif %}{{ item.datetime_update|date:"d.m.Y" }}</small></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

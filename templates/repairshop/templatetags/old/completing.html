@@ -1,0 +1,73 @@
+{% load bootstrap4 repairshop_tags %}
+
+<table class="table table-bordered table-sm">
+    {{ formset.management_form }}
+    {% for form in formset.forms %}
+        {% get_techprocess_data techprocess form.instance.id as data_cmp %}
+        {% if forloop.first %}
+            <thead>
+                <tr class="text-center">
+                    <th style="width: 20%;">Наименование работ</th>
+                    <th style="width: 8%;">Стоимость</th>
+                    <th style="width: 10%;">План,кол-во</th>
+                    <th style="width: 10%;">Факт,кол-во</th>
+                    <th style="width: 8%;">Срок</th>
+                    <th style="width: 12%;" colspan="2">Исполнитель</th>
+                    <th style="width: 12%;" colspan="2">Ответственный</th>
+                    <th style="width: 18%;">Замечание</th>
+                    <th style="width: 2%;">Удалить</th>
+                </tr>
+            </thead>
+        {% endif %}
+        <tr class="formset_row p-0 m-0 {% if data_cmp.complete == True and data_cmp.accepted == False %}table-warning{% elif data_cmp.result.slug == 'accepted' %}table-success{% elif data_cmp.result.slug == 'reject' %}table-success{% elif data_cmp.result.slug == 'modification' %}table-warning{% endif %}">
+            <td class="pt-2">
+                {% bootstrap_field form.id layout='inline' %}
+                {% bootstrap_field form.equipment layout='inline' %}
+                {% bootstrap_field form.name layout='inline' %}
+            </td>
+            <td>{% bootstrap_field form.price layout='inline' field_class='form-control-sm' %}</td>
+            <td>{% bootstrap_field form.count_plan layout='inline' field_class='form-control-sm' %}</td>
+            <td>{% bootstrap_field form.count_fact layout='inline' field_class='form-control-sm' %}</td>
+            <td>
+                {% if data_cmp.accepted %}
+                    {{ data_cmp.date_due|date:"d.m.Y" }}
+                {% else %}
+                    {% bootstrap_field form.date_due layout='inline' field_class='form-control-sm' %}
+                {% endif %}
+            </td>
+            <td style="width: 3%;">
+                {% if data_cmp.complete %}
+                    {{ data_cmp.date_complete|date:"d.m.Y" }} {{ data_cmp.date_complete|time:"H:i" }}
+                {% else %}
+                    <span class="h4">нет</span>
+                {% endif %}
+            </td>
+            <td style="width: 9%;">
+                {% if data_cmp.accepted %}
+                    {{ data_cmp.executor }}
+                {% else %}
+                    {% bootstrap_field form.executor layout='inline' field_class='form-control-sm' %}
+                {% endif %}
+            </td>
+            <td style="width: 3%;">
+                {% if data_cmp.result %}
+                    {{ data_cmp.result.name }}
+                {% else %}
+                    <span class="h4">нет</span>
+                {% endif %}
+            </td>
+            <td style="width: 9%;">
+                {% if data_cmp.accepted %}
+                    {{ data_cmp.receiving }}<br/>
+                    {{ data_cmp.date_receiving|date:"d.m.Y" }} {{ data_cmp.date_receiving|time:"H:i" }}
+                {% elif data_cmp.group_receiving %}
+                    <span class="h4">{{ data_cmp.group_receiving }}</span>
+                {% else %}
+                    <span class="h4">нет</span>
+                {% endif %}
+            </td>
+            <td>{% bootstrap_field form.comment layout='inline' field_class='form-control-sm' %}</td>
+            <td>{% bootstrap_field form.DELETE layout='inline' %}</td>
+        </tr>
+    {% endfor %}
+</table>

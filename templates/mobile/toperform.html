@@ -1,0 +1,48 @@
+{% extends 'mobile/base_mobile.html' %}
+{% load bootstrap4 personal_tags %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="x_title">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item h5 p-0">
+                Ремонтный
+                {% if sc_data.equipment.type == 'engine' %}двигатель
+                {% elif sc_data.equipment.type == 'transformer' %}трансформатор
+                {% endif %}
+                №{{ sc_data.repairnum }} - {{ sc_data.equipment.name }}
+            </li>
+            <li class="list-group-item"><strong>Наименование: {% if ap_data.name %}{{ ap_data.name }}{% else %}{{ ap_data.indications }}{% endif %}</strong></li>
+            <li class="list-group-item">Заказчик: {{ sc_data.shipment.client }}</li>
+            <li class="list-group-item">Исполнители: {% for person in ap_data.executor.all %}{% if forloop.counter > 1 %}, {% endif %}{{ person }}{% endfor %}          </li>
+            <li class="list-group-item">
+                Принимает:
+                {% if ap_data.receiving %}{{ ap_data.receiving.user.username|view_shortfio_user }}
+                {% else %}{{ ap_data.group_receiving.name }}
+                {% endif %}
+            </li>
+            <li class="list-group-item">Срок выполнения: {{ ap_data.date_due }}</li>
+            <li class="list-group-item">Ток: {% if sc_data.equipment.amperage == 'variable' %}переменный ток{% else %}постоянный ток{% endif %}</li>
+            <li class="list-group-item">P: {{ sc_data.equipment.p }} кВт</li>
+            <li class="list-group-item">U: {{ sc_data.equipment.u }} В</li>
+            <li class="list-group-item">n: {{ sc_data.equipment.n }} об/мин</li>
+        </ul>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+            <div class="container">
+                <form action="{{ url_ }}" method="post" class="form" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% bootstrap_form form layout='horizontal' %}
+                    {% buttons %}
+                        <a href="{% url 'mobile:getlist-executor-tasks' %}" class="btn btn-default float-left">
+                            <i class="fa fa-arrow-left" aria-hidden="true"></i> Вернуться
+                        </a>
+                        {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary float-right" %}
+                    {% endbuttons %}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,44 @@
+<div>
+    <table class="table table-sm">
+        <thead>
+            <tr class="text-center">
+                <th style="width: 5%;">#</th>
+                <th style="width: 20%;">Наименование работ</th>
+                <th style="width: 10%;">Исполнитель</th>
+                <th style="width: 10%;">Ответственный</th>
+                <th style="width: 10%;">Срок</th>
+                <th style="width: 10%;">Выполнено</th>
+                <th style="width: 10%;">Принял</th>
+                <th style="width: 25%;">Замечания</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in table_data %}
+                <tr class="formset_row p-0 m-0 {% if item.complete == True and item.accepted == False %}table-warning{% elif item.accepted == True %}table-success{% endif %}">
+                    <td class="text-center">{{ forloop.counter }}</td>
+                    <td>{{ item.name }}</td>
+                    <td class="text-center">
+                        {% for fio in item.executor.all %}
+                            {% if forloop.counter > 1 %}, {% endif %}{{ fio }}
+                        {% empty %}
+                            <span class="h4">нет</span>
+                        {% endfor %}
+                    </td>
+                    <td class="text-center">{{ item.receiving }}</td>
+                    <td class="text-center">{{ item.date_due|date:"d.m.Y" }}</td>
+                    <td class="text-center">
+                        {% if item.complete %}
+                            Исполнено {{ item.date_complete|date:"d.m.Y" }} {{ item.date_complete|time:"H:i" }}
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if item.receiving %}
+                            {{ item.receiving }} {{ item.date_receiving|date:"d.m.Y" }} {{ item.date_receiving|time:"H:i" }}
+                        {% endif %}
+                    </td>
+                    <td>{{ item.comment }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

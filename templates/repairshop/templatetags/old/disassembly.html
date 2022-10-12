@@ -1,0 +1,65 @@
+{% load bootstrap4 repairshop_tags %}
+
+<table class="table table-bordered table-sm">
+    {{ formset.management_form }}
+    {% for form in formset.forms %}
+        {% get_techprocess_data techprocess form.instance.id as data_ds %}
+        {% if forloop.first %}
+            <thead>
+                <tr class="text-center">
+                    <th style="width: 30%;">Наименование работ</th>
+                    <th style="width: 15%;">Исполнитель</th>
+                    <th style="width: 8%;">Срок</th>
+                    <th style="width: 8%;">Выполнено</th>
+                    <th style="width: 9%;">Принял</th>
+                    <th style="width: 25%;">Замечания</th>
+                    <th style="width: 5%;"><i class="fa fa-trash-o fa-2x" aria-hidden="true"></i></th>
+                </tr>
+            </thead>
+        {% endif %}
+        <tr class="formset_row p-0 m-0 {% if data_ds.complete == True and data_ds.accepted == False %}table-warning{% elif data_ds.accepted == True %}table-success{% endif %}">
+            <td class="pt-2">
+                {% bootstrap_field form.id layout='inline' %}
+                {% bootstrap_field form.equipment layout='inline' %}
+                {% if data_ds.accepted %}
+                    {{ data_ds.name }}
+                {% else %}
+                    {% bootstrap_field form.name layout='inline' %}
+                {% endif %}
+            </td>
+            <td class="text-center">
+                {% if data_ds.accepted %}
+                    {{ data_ds.executor }}
+                {% else %}
+                    {% bootstrap_field form.executor layout='inline' field_class='form-control-sm' %}
+                {% endif %}
+            </td>
+            <td class="text-center">
+                {% if data_ds.accepted %}
+                    {{ data_ds.date_due|date:"d.m.Y" }}
+                {% else %}
+                    {% bootstrap_field form.date_due layout='inline' field_class='form-control-sm' %}
+                {% endif %}
+            </td>
+            <td class="text-center">
+                {% if data_ds.complete %}
+                    {{ data_ds.date_complete|date:"d.m.Y" }} {{ data_ds.date_complete|time:"H:i" }}
+                {% else %}
+                    <span class="h4">нет</span>
+                {% endif %}
+            </td>
+            <td class="text-center">
+                {% if data_ds.accepted %}
+                    {{ data_ds.receiving }}<br/>
+                    {{ data_ds.date_receiving|date:"d.m.Y" }} {{ data_ds.date_receiving|time:"H:i" }}
+                {% else %}
+                    <span class="h4">нет</span>
+                {% endif %}
+            </td>
+            <td>
+                {% bootstrap_field form.comment layout='inline' field_class='form-control-sm' %}
+            </td>
+            <td class="text-center">{% bootstrap_field form.DELETE layout='inline' show_label='False' %}</td>
+        </tr>
+    {% endfor %}
+</table>

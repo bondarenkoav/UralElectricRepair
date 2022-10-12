@@ -1,0 +1,34 @@
+{% load repairshop_tags %}
+
+<div>
+    <table class="table table-sm">
+        <thead>
+            <tr class="text-center">
+                <th style="width: 10%;">Код</th>
+                <th style="width: 30%;">Файл</th>
+                <th style="width: 48%;">Замечание</th>
+                <th style="width: 10%;">Дата</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in table_data %}
+                <tr class="formset_row p-0 m-0">
+                    <td class="pt-2">{{ item.key }}</td>
+                    <td>
+                        {% if item.file %}
+                            <a href="{% url 'production:get-file' 'investments' item.id %}" target="_blank">
+                                {% get_icon_file_ext item.file.url %} {{ item.file.name }}
+                            </a>
+                        {% endif %}
+                    </td>
+                    <td>{{ item.comment }}</td>
+                    <td class="text-center">
+                        {% if item.datetime_add %}
+                            {{ item.datetime_add|date:"d.m.Y" }}<br/>{{ item.datetime_add|date:"H:i" }}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

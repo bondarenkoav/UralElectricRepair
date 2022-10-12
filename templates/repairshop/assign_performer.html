@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="x_panel">
+        <div class="x_content">
+            <div class="container">
+                <form action="{% url 'production:assign-performer' type type_pk %}" method="post">
+                    {% csrf_token %}
+                    {% bootstrap_messages form %}
+                    {% bootstrap_form form layout='horizontal' %}
+                    {% buttons %}
+                        <a href="{% url 'dashboard:index' %}" class="btn btn-default float-left">
+                            <i class="fa fa-arrow-left" aria-hidden="true"></i> Вернуться
+                        </a>
+                        {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary float-right" %}
+                    {% endbuttons %}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static bootstrap4 %}
+
+{% block include_header %}
+{% endblock %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="x_panel">
+                <div class="x_content">
+                    <div class="row text-center">
+                        <div class="col-1">Тип</div>
+                        <div class="col-1">Ток</div>
+                        <div class="col-5">Наименование</div>
+                        <div class="col-1">P, кВт</div>
+                        <div class="col-1">U, v</div>
+                        <div class="col-1">n, об/мин</div>
+                        <div class="col-1">Unn</div>
+                        <div class="col-1">Uvn</div>
+                    </div>
+                    <div><hr/></div>
+                    <form action="{% url 'production:add-charactequipment' shipment_data.id %}" method="post" class="form">
+                        {% csrf_token %}
+                        {{ formset.management_form }}
+                        {% bootstrap_messages %}
+                        {% bootstrap_formset_errors formset layout='horizontal' %}
+                        {% for form in formset %}
+                            <div class="row">
+                                <div class="input-group">
+                                    <div class="col-1 d-none d-xs-block">
+                                        {% bootstrap_field form.id layout='inline' %}
+                                    </div>
+                                    <div class="col-1">{% bootstrap_field form.type layout='inline' %}</div>
+                                    <div class="col-1">{% bootstrap_field form.amperage layout='inline' %}</div>
+                                    <div class="col-5">{% bootstrap_field form.name layout='inline' %}</div>
+                                    <div class="col-1">{% bootstrap_field form.p layout='inline' %}</div>
+                                    <div class="col-1">{% bootstrap_field form.u layout='inline' %}</div>
+                                    <div class="col-1">{% bootstrap_field form.n layout='inline' %}</div>
+                                    <div class="col-1">{% bootstrap_field form.unn layout='inline' %}</div>
+                                    <div class="col-1">{% bootstrap_field form.uvn layout='inline' %}</div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div><hr/></div>
+                        {% buttons %}
+                            {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary" %}
+                            <a class="btn btn-success" href="{% url 'dashboard:index' %}" role="button">Завершить</a>
+                        {% endbuttons %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

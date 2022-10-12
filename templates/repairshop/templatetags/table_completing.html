@@ -1,0 +1,50 @@
+{% load repairshop_tags %}
+
+<div>
+    <table class="table table-sm">
+        <thead>
+            <tr class="text-center">
+                <th style="width: 5%">#</th>
+                <th style="width: 30%;">Наименование работ</th>
+                <th style="width: 10%;">Срок</th>
+                <th style="width: 10%;">Исполнитель</th>
+                <th style="width: 10%;">Ответственный</th>
+                <th style="width: 10%;">Исполнено</th>
+                <th style="width: 10%;">Принял</th>
+                <th style="width: 15%;">Замечание</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in table_data %}
+                <tr class="formset_row p-0 m-0 {% if item.complete == True and item.result.slug == None %}table-warning{% elif item.result.slug == 'accepted' %}table-success{% elif item.result.slug == 'reject' %}table-danger{% elif item.result.slug == 'modification' %}table-warning{% endif %}">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.date_due|date:"d.m.Y" }}</td>
+                    <td>
+                        {% for fio in item.executor.all %}
+                            {% if forloop.counter > 1 %}, {% endif %}{{ fio }}
+                        {% empty %}
+                            <span class="h4">нет</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if item.receiving %}
+                            {{ item.receiving }}
+                        {% elif item.group_receiving %}
+                            {{ item.group_receiving }}
+                        {% else %}
+                            <span class="h4">нет</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ item.date_complete|date:"d.m.Y" }} {{ item.date_complete|time:"H:i" }}</td>
+                    <td>
+                        {% if item.result %}
+                            {{ item.result.name }}
+                        {% endif %}
+                    </td>
+                    <td>{{ item.comment }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,89 @@
+{% load bootstrap4 repairshop_tags %}
+
+<table class="table table-bordered table-sm">
+    {{ formset.management_form }}
+    {% for form in formset.forms %}
+        {% get_techprocess_data techprocess form.instance.id as data_fd %}
+        {% if forloop.first %}
+            <thead>
+                <tr class="text-center">
+                    <th style="width: 16%;" rowspan="2">Наименование работ</th>
+                    <th style="width: 6%;" rowspan="2">Стоимость</th>
+                    <th style="width: 15%;" rowspan="2">Общие сведения</th>
+                    <th style="width: 15%;" rowspan="2">Вид работ,<br/>замер комплектующих</th>
+                    <th style="width: 6%;" rowspan="2">Количество<br/>деталей</th>
+                    <th style="width: 6%;" rowspan="2">Заказ</th>
+                    <th style="width: 10%;">Исполнитель</th>
+                    <th style="width: 8%;">Результат</th>
+                    <th style="width: 3%;" rowspan="2">Фото</th>
+                    <th style="width: 8%;">Срок выполнения</th>
+                    <th style="width: 2%;" rowspan="2">
+                        <i class="fa fa-trash-o fa-2x" aria-hidden="true"></i>
+                    </th>
+                </tr>
+                <tr class="text-center">
+                    <th>Принял</th>
+                    <th>Ответственный</th>
+                    <th>Дата выполнения</th>
+                </tr>
+            </thead>
+        {% endif %}
+        <tr class="formset_row p-0 m-0 {% if data_fd.complete == True and data_fd.result.slug is None %}table-warning{% elif data_fd.result.slug == 'accepted' %}table-success{% elif data_fd.result.slug == 'reject' %}table-danger{% elif data_fd.result.slug == 'modification' %}table-warning{% endif %}">
+            <td class="pt-2">
+                {% bootstrap_field form.id layout='inline' %}
+                {% bootstrap_field form.equipment layout='inline' %}
+                {% if data_fd.accepted %}
+                    {{ data_fd.name }}
+                {% else %}
+                    {% bootstrap_field form.name layout='inline' %}
+                {% endif %}
+            </td>
+            <td>{% bootstrap_field form.price layout='inline' field_class='form-control-sm' %}</td>
+            <td>{% bootstrap_field form.general_info layout='inline' field_class='form-control-sm' %}</td>
+            <td>{% bootstrap_field form.type_work layout='inline' field_class='form-control-sm' %}</td>
+            <td>{% bootstrap_field form.count_components layout='inline' field_class='form-control-sm' %}</td>
+            <td>{% bootstrap_field form.count_order layout='inline' field_class='form-control-sm' %}</td>
+            <td class="text-center">
+                {% if data_fd.accepted %}
+                    {{ data_fd.executor }}
+                {% else %}
+                    {% bootstrap_field form.executor layout='inline' field_class='form-control-sm' %}
+                {% endif %}
+                {% if data_fd.accepted %}
+                    {{ data_fd.receiving }}<br/>
+                    {{ data_fd.date_receiving|date:"d.m.Y" }} {{ data_fd.date_receiving|time:"H:i" }}
+                {% else %}
+                    <span class="h4">нет</span>
+                {% endif %}
+            </td>
+            <td>
+                {% bootstrap_field form.result %}
+                {% if data_m.result %}
+                    {{ data_m.result }}
+                {% else %}
+                    <span class="h4">нет</span>
+                {% endif %}/<span class="h4">ОТК</span>
+            </td>
+            <td>
+                {% if data_fd.photo %}
+                    <a href="{% url 'production:get-file' 'faultdetection' data_fd.id %}" target="_blank">
+                        {% get_icon_file_ext data_fd.photo.url %}
+                    </a>
+                {% endif %}
+            </td>
+            <td class="text-center">
+                {% if data_fd.accepted %}
+                    {{ data_fd.date_due|date:"d.m.Y" }}
+                {% else %}
+                    {% bootstrap_field form.date_due layout='inline' field_class='form-control-sm' %}
+                {% endif %}
+                {% if data_ds.complete %}
+                    {{ data_fd.date_complete|date:"d.m.Y" }} {{ data_fd.date_complete|time:"H:i" }}
+                {% else %}
+                    <span class="h4">нет</span>
+                {% endif %}
+            </td>
+            <td>{% bootstrap_field form.DELETE layout='inline' %}</td>
+        </tr>
+    {% endfor %}
+</table>

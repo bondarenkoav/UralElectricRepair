@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block page_title %}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="x_panel">
+{% comment %}                <div class="x_title">
+                    <h2>{{ title }} <small>Справочники</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <i class="fa fa-plus-circle fa-5x" aria-hidden="true" style="text-shadow: 1px 1px 2px black, 0 0 1em white;" data-toggle="tooltip"
+                           data-placement="left" title="Добавить {% block add_object_name %}{% endblock %}">
+                        </i>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>{% endcomment %}
+                <div class="x_content">
+                    <div class="container" style="position: relative; z-index: 1; margin-top: -17px; margin-bottom: 20px;">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr class="text-center">
+                                    {% block table_head %}
+                                    {% endblock %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% block table_body %}
+                                {% endblock %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block pagination %}{% endblock %}
+

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static bootstrap4 %}
+
+{% block include_header %}
+{% endblock %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="x_panel">
+                <div class="x_content">
+                    <div class="row text-center">
+                        <div class="col-2">Ремонтный номер</div>
+                        <div class="col-3">Группа оборуд.</div>
+                        <div class="col-3">Оборудование</div>
+                        <div class="col-2">Срочность</div>
+                        <div class="col-1">Участок</div>
+                        <div class="col-1">Смета</div>
+                    </div>
+                    <div><hr/></div>
+                    <form action="{% url 'production:add-scopeshipment' shipment_data.id %}" method="post" class="form">
+                        {% csrf_token %}
+                        {{ formset.management_form }}
+                        {% bootstrap_messages %}
+                        {% bootstrap_formset_errors formset layout='horizontal' %}
+                        {% for form in formset %}
+                            <div class="row">
+                                <div class="input-group">
+                                    <div class="col-1 d-none d-xs-block">
+                                        {% bootstrap_field form.id layout='inline' %}
+                                    </div>
+                                    <div class="col-2">{% bootstrap_field form.repairnum layout='inline' %}</div>
+                                    <div class="col-3">{% bootstrap_field form.group_eq layout='inline' %}</div>
+                                    <div class="col-3">{% bootstrap_field form.equipment layout='inline' %}</div>
+                                    <div class="col-2">{% bootstrap_field form.urgency layout='inline' %}</div>
+                                    <div class="col-1">{% bootstrap_field form.section layout='inline' %}</div>
+                                    <div class="col-1 text-center">{% bootstrap_field form.estimate layout='inline' %}</div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div><hr/></div>
+                        {% buttons %}
+                            {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary" %}
+                            <a class="btn btn-success" href="{% url 'production:add-charactequipment' shipment_data.id %}" role="button">Далее</a>
+                        {% endbuttons %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

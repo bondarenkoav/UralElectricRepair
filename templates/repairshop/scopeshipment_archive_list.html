@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load repairshop_tags bootstrap4 %}
+
+{% block filters_form %}
+    {% bootstrap_form list_filter.form layout='horizontal' horizontal_label_class='col-md-4' horizontal_field_class='col-md-8' show_help=False  %}
+{% endblock %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="x_panel pl-0 pr-0">
+        <div class="x_content">
+            <table class="table table-striped">
+                <thead>
+                    <tr class="text-center">
+                        <th style="width: 5%;">#</th>
+                        <th style="width: 10%;">№ Ремонтный</th>
+                        <th style="width: 10%;">Дата поступления</th>
+                        <th style="width: 10%;">№ Спецификации</th>
+                        <th style="width: 15%;">Контрагент</th>
+                        <th style="width: 20%;">Оборудование</th>
+                        <th style="width: 10%;">Участок</th>
+                        <th style="width: 10%;">Дата готовности</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in list %}
+                        <tr id="obj_{{ object.id }}" onclick="location.href = '{% url 'production:scopeshipment-archive' item.pk %}';" class="text-center">
+                            <th style="width: 5%;">{{ forloop.counter }}</th>
+                            <th style="width: 10%;">{{ item.repairnum }}</th>
+                            <th style="width: 10%;">{{ item.shipment.dateshipment|date:"d.m.Y" }}</th>
+                            <th style="width: 10%;">{{ item.shipment.specificationnum }}</th>
+                            <th style="width: 15%;">{{ item.shipment.client }}</th>
+                            <th style="width: 20%;">{{ item.equipment }}</th>
+                            <th style="width: 10%;">
+                                {% if item.section == 'upto100kvt' %}
+                                    До 100 кВт
+                                {% elif item.section == 'from100kvt' %}
+                                    Свыше 100 кВт
+                                {% elif item.section == 'from100kvt' %}
+                                    Прочие
+                                {% endif %}
+                            </th>
+                            <th style="width: 10%;">{{ item.dateready|date:"d.m.Y" }}</th>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% include 'templatetags/pagination.html' with page_obj=list %}
+{% endblock %}
+

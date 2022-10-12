@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="x_panel">
+                <div class="x_content">
+                    {% bootstrap_form_errors form %}
+                    <form action="{% url 'production:add-shipment' %}" method="post" class="form" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% bootstrap_form form layout='horizontal' %}
+                        {% buttons %}
+                            <a class="btn btn-warning float-left" href="{% url 'dashboard:index' %}" role="button">Отменить</a>
+                            {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary float-right" %}
+                        {% endbuttons %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

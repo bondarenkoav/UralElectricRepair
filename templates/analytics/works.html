@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load bootstrap4 tasks_tags %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6 offset-md-3 container card m-b-30 d-print-none" style="margin-top: -30px; background-color: #EFF3F6;">
+            <button type="button" class="btn btn-dark pull-right" aria-hidden="true" data-toggle="collapse" data-target="#form-search" style="width: 170px; margin-top: -5px;">
+                Параметры поиска
+            </button>
+            <div class="card collapse {% if requests == None or requests.count == 0 %}show{% endif %}" id="form-search" style="padding: 10px;">
+                <form action="{% url 'analytics:report_works' %}" method="post" class="form" style="margin-top: 8px;">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-3" style="padding-top: 5px;">
+                                {% bootstrap_label "Дата(ы)" label_for="requestdate" %}
+                                <i class="fa fa-info-circle fa-lg" style="color:blue" data-toggle="tooltip" data-placement="top" title="Второе поле даты - необязательное. При выборе <За весь период>, не удаляйте даты из полей." aria-hidden="true"></i>
+                            </div>
+                            <div class="col-3">
+                                {% bootstrap_field form.startdate layout='inline' %}
+                            </div>
+                            <div class="col-3">
+                                {% bootstrap_field form.enddate layout='inline' %}
+                            </div>
+                            <div class="col-3">
+                                {% bootstrap_field form.norangedate layout='inline' %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-3" style="padding-top: 5px;">
+                                {% bootstrap_label "Исполнитель" label_for="typerequest" %}
+                            </div>
+                            <div class="col-9">
+                                {% bootstrap_field form.executor layout='inline' %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-3" style="padding-top: 5px;">
+                                {% bootstrap_label "Автор задачи" label_for="coworkers" %}
+                            </div>
+                            <div class="col-9">
+                                {% bootstrap_field form.author layout='inline' %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-3" style="padding-top: 5px;">
+                                {% bootstrap_label "Контрагент" label_for="coworkers" %}
+                            </div>
+                            <div class="col-9">
+                                {% bootstrap_field form.client layout='inline' %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-3" style="padding-top: 5px;">
+                                {% bootstrap_label "Статус задачи" label_for="typerequest" %}
+                            </div>
+                            <div class="col-6">
+                                {% bootstrap_field form.status layout='inline' %}
+                            </div>
+                            <div class="col-3">
+                                {% bootstrap_button "Показать" button_type="submit" button_class="btn-primary" %}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+        {% if list.count > 0 %}
+            <div class="row mt-3">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="thead-dark">
+                            <tr class="text-center">
+                                <td style="width: 5%;">#</td>
+                                <td style="width: 10%;">Исполнители</td>
+                                <td style="width: 5%;">РН</td>
+                                <td style="width: 20%;">Задача</td>
+                                <td style="width: 10%;">Срок</td>
+                                <td style="width: 15%;">Контрагент</td>
+                                <td style="width: 15%;">Статус</td>
+                                <td style="width: 10%;">Выполнено</td>
+                                <td style="width: 5%;">Создал</td>
+                                <td style="width: 5%;">Обновил</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in list %}
+                                {% get_repairnum item.model_name item.record_id as equipment %}
+                                <tr>
+                                    <td class="text-center">{{ forloop.counter }}</td>
+                                    <td class="text-right">
+                                        {% if item.executor %}{{ item.executor.user.last_name }} {{ item.executor.user.first_name }}
+                                        {% else %}{{ item.group_executor.name }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-right">
+                                        <h4>{{ equipment.repairnum }}</h4>
+                                    </td>
+                                    <td class="text-right">
+                                        <h6>{{ item.title }}</h6> <small>{{ item.description }}</small>
+                                    </td>
+                                    <td class="text-center">{{ item.date_limit|date:'d.m.Y' }}</td>
+                                    <td>{{ equipment.shipment.client.name }}</td>
+                                    <td class="text-center">{{ item.status.name }}</td>
+                                    <td class="text-center">
+                                        {% if item.complete == False %}Нет{% else %}Да{% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ item.create_user.last_name }} {{ item.create_user.first_name }}
+                                        {{ item.datetime_add|date:"d.m.Y H:m"  }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ item.update_user.last_name }} {{ item.update_user.first_name }}
+                                        {{ item.datetime_update|date:"d.m.Y" }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-warning mt-3" role="alert">
+                Нет результатов поиска. Попробуйте изменить параметры поиска!
+            </div>
+        {% endif %}
+{% endblock %}

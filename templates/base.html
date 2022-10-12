@@ -1,0 +1,107 @@
+{% load static dashboard_tags %}
+
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!-- Meta, title, CSS, favicons, etc. -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <link rel="icon" href="{% static "images/favicon.ico" %}" type="image/ico" />
+
+        <title>РемФонд</title>
+
+        <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+        <link href="{% static "css/font-awesome.min.css" %}" rel="stylesheet">
+        <link href="{% static "css/nprogress.css" %}" rel="stylesheet">
+        <link href="{% static "css/green.css" %}" rel="stylesheet">
+        <link href="{% static "css/bootstrap-progressbar.min.css" %}" rel="stylesheet">
+        <link href="{% static "css/jqvmap.min.css" %}" rel="stylesheet"/>
+        <link href="{% static "css/daterangepicker.css" %}" rel="stylesheet">
+        <link href="{% static "css/custom.min.css" %}" rel="stylesheet">
+        {% block include_header %}{% endblock %}
+    </head>
+
+    <body class="nav-md">
+        <div class="container body">
+            <div class="main_container">
+                <div class="col-md-3 left_col">
+                    <div class="left_col scroll-view">
+                        <div class="navbar nav_title" style="border: 0;">
+                            <a href="{% url "dashboard:index" %}" class="site_title">
+                                <span class="align-center"> - РемФОНД - </span>
+                            </a>
+                        </div>
+                        <div class="clearfix"></div>
+
+                        <!-- menu profile quick info -->
+                        <div class="profile clearfix">
+                            <div class="profile_pic">
+                                <img src="{% static 'images/img.jpg' %}" alt="photo" class="img-circle profile_img">
+                            </div>
+                            <div class="profile_info">
+                                <h2>{% current_user request %}</h2>
+                            </div>
+                        </div>
+                        <!-- /menu profile quick info -->
+                        <br />
+                        {% tag_navigation %}
+                    </div>
+                </div>
+                {% include 'templatetags/top_navigation.html' %}
+                <!-- page content -->
+                <div class="right_col" role="main">
+                    <div class="page-title">
+						<div class="title_left">
+                            <h4>{% block page_title %}{% endblock %}</h4>
+						</div>
+                        {% block page_filterlist %}{% endblock %}
+					</div>
+                    <div class="clearfix"></div>
+                    {% block content %}{% endblock %}
+                </div>
+                <!-- /page content -->
+                {% block page_pagination %}{% endblock %}
+                {% include 'templatetags/footer.html' %}
+            </div>
+        </div>
+
+        <script src="{% static "js/jquery.min.js" %}"></script>
+        <script src="{% static "js/bootstrap.bundle.min.js" %}"></script>
+        <script src="{% static "js/fastclick.js" %}"></script>
+        <script src="{% static "js/nprogress.js" %}"></script>
+        <script src="{% static "js/Chart.min.js" %}"></script>
+        <script src="{% static "js/gauge.min.js" %}"></script>
+        <!-- bootstrap-progressbar -->
+        <script src="{% static "js/bootstrap-progressbar.min.js" %}"></script>
+        <!-- iCheck -->
+        <script src="{% static "js/icheck.min.js" %}"></script>
+        <!-- Skycons -->
+        <script src="{% static "js/skycons.js" %}"></script>
+        <!-- Flot -->
+        <script src="{% static "js/jquery.flot.js" %}"></script>
+        <script src="{% static "js/jquery.flot.pie.js" %}"></script>
+        <script src="{% static "js/jquery.flot.time.js" %}"></script>
+        <script src="{% static "js/jquery.flot.stack.js" %}"></script>
+        <script src="{% static "js/jquery.flot.resize.js" %}"></script>
+        <!-- Flot plugins -->
+        <script src="{% static "js/jquery.flot.orderBars.js" %}"></script>
+        <script src="{% static "js/jquery.flot.spline.min.js" %}"></script>
+        <script src="{% static "js/curvedLines.js" %}"></script>
+        <!-- DateJS -->
+        <script src="{% static "js/date.js" %}"></script>
+        <!-- JQVMap -->
+        <script src="{% static "js/jquery.vmap.js" %}"></script>
+        <script src="{% static "js/jquery.vmap.world.js" %}"></script>
+        <script src="{% static "js/jquery.vmap.sampledata.js" %}"></script>
+        <!-- bootstrap-daterangepicker -->
+        <script src="{% static "js/moment.min.js" %}"></script>
+        <script src="{% static "js/daterangepicker.js" %}"></script>
+
+        <!-- Custom Theme Scripts -->
+        <script src="{% static "js/custom.min.js" %}"></script>
+        {% block include_footer %}{% endblock %}
+
+    </body>
+</html>

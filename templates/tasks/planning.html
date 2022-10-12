@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load repairshop_tags bootstrap4 %}
+
+{% block include_header %}
+    <style>
+        .card-header {
+            padding: 0;
+        }
+        .fixed_height_600 {
+            height: 600px;
+        }
+    </style>
+{% endblock %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+
+{% block content %}
+    <div class="x_panel pl-0 pr-0">
+        <div class="x_content">
+            <div class="row">
+                <div class="col-3">
+                    <div id="accordion">
+                        {% for root_node in root_parent_nodes %}
+                            <div class="card">
+                                <div class="card-header" id="heading{{ root_node.slug }}">
+                                    <h5 class="mb-0">
+                                        <button class="btn btn-link" data-toggle="collapse" data-target="#{{ root_node.slug }}" aria-expanded="true" aria-controls="{{ root_node.slug }}">
+                                            {{ root_node.name }}
+                                        </button>
+                                    </h5>
+                                </div>
+                                <div id="{{ root_node.slug }}" class="collapse" aria-labelledby="heading{{ root_node.slug }}" data-parent="#accordion">
+                                    {% getlist_planning_techprocess root_node.slug %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-9">
+                    <div class="middle_box">
+                        <div class="row">
+
+                            <div class="col-md-3 col-sm-3">
+                                <div class="x_panel tile fixed_height_600 bg-secondary text-white">
+                                    <div class="x_title">
+                                        <h2>На неделю к работе</h2>
+                                        <ul class="nav navbar-right panel_toolbox">
+                                            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                                        </ul>
+                                        <span>{% bootstrap_field form.curr_week layout='inline' %}</span>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="x_content collapse" style="display: block;">
+                                        {% getlist_planning_currweek root_node item.name %}
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-3">
+                                <div class="x_panel tile fixed_height_600 bg-info text-white">
+                                    <div class="x_title">
+                                        <h2>План на день</h2>
+                                        <ul class="nav navbar-right panel_toolbox">
+                                            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                                        </ul>
+                                        <span>{% bootstrap_field form.curr_day layout='inline' %}</span>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="x_content collapse" style="display: block;">
+                                        {% getlist_planning_currday root_node item.name %}
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-3">
+                                <div class="x_panel tile fixed_height_600 bg-warning text-white">
+                                    <div class="x_title">
+                                        <h2 style="color: black;">Выполнено</h2>
+                                        <ul class="nav navbar-right panel_toolbox">
+                                            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                                        </ul>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="x_content collapse" style="display: block;">
+                                        {% getlist_planning_complete root_node item.name %}
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-3">
+                                <div class="x_panel tile fixed_height_600 bg-success text-white">
+                                    <div class="x_title">
+                                        <h2>Принято</h2>
+                                        <ul class="nav navbar-right panel_toolbox">
+                                            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                                        </ul>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="x_content collapse" style="display: block;">
+                                        {% getlist_planning_accepted root_node item.name %}
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

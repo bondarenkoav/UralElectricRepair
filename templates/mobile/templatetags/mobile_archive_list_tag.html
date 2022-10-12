@@ -1,0 +1,10 @@
+{% if item %}
+    <a href="{% url 'mobile:getitem_task' item.id %}" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{{ item.title }}</h5>
+            <small>{% if item.date_limit %}{{ item.date_limit }}{% endif %}</small>
+        </div>
+        <p class="mb-1">{{ item.description }}</p>
+        <small>{% if complete %}Выполнено{% else %}Не выполнено{% endif %}</small>
+    </a>
+{% endif %}

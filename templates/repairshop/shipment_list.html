@@ -1,0 +1,34 @@
+{% extends 'reference_books/../container.html' %}
+{% load paginator_tags repairshop_tags %}
+
+{% block page_title %}Список поставок{% endblock %}
+
+{% block table_head %}
+    <td style="width: 5%;">№ спецификации</td>
+    <td style="width: 10%;">Дата поставки</td>
+    <td style="width: 37%;">Контрагент</td>
+    <td style="width: 8%;">Фото поставки</td>
+    <td style="width: 8%;">Кол-во оборудования</td>
+    <td style="width: 8%;">Добавлено</td>
+    <td style="width: 8%;">Обновлено</td>
+{% endblock %}
+
+{% block table_body %}
+    {% for item in list %}
+        <tr id="obj_{{ item.id }}" onclick="location.href = '{% url 'production:get-shipment' item.id %}';">
+            <td class="text-center">{{ item.specificationnum }}</td>
+            <td class="text-center">{{ item.dateshipment }}</td>
+            <td>{{ item.client }}</td>
+            <td class="text-center">{% if item.photo %}Есть{% endif %}</td>
+            <td class="text-center">{% get_count_scoupshipment item.id %}</td>
+            <td class="text-center"><small>{{ item.create_user }}<br>{{ item.datetime_add|date:"d.m.Y" }}</small></td>
+            <td class="text-center">
+                <small>{% if item.update_user %}{{ item.update_user }}{% endif %}<br>{{ item.datetime_update|date:"d.m.Y" }}</small>
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block pagination %}
+    {% rb_pagination list_clients 'production' 'getlist_shipments' %}
+{% endblock %}

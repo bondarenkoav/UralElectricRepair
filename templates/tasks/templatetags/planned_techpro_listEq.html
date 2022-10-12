@@ -1,0 +1,5 @@
+<ul class="list-group list-group-horizontal-xl">
+    {% for item in list_equipment %}
+        <li class="list-group-item mr-1" data-model-name="{{ item.equipment.id }}">{{ item.equipment.repairnum }}</li>
+    {% endfor %}
+</ul>

@@ -1,0 +1,36 @@
+{% extends 'reference_books/../container.html' %}
+{% load paginator_tags %}
+
+{% block page_title %}Список оборудования{% endblock %}
+
+{% block table_head %}
+    <td style="width: 5%;">№ п/п</td>
+    <td style="width: 10%;">Тип</td>
+    <td style="width: 37%;">Наименование</td>
+    <td style="width: 8%;">I, А</td>
+    <td style="width: 8%;">P, кВт</td>
+    <td style="width: 8%;">u, В</td>
+    <td style="width: 8%;">n, об/мин</td>
+    <td style="width: 8%;">unn, В</td>
+    <td style="width: 8%;">uvn, В</td>
+{% endblock %}
+
+{% block table_body %}
+    {% for item in list %}
+        <tr id="obj_{{ item.id }}" onclick="location.href = '{% url 'rbooks:update_equipment' item.id %}';">
+            <td class="text-center">{{ item.id }}</td>
+            <td class="text-center">{% if item.type == 'engine' %}Эл.двигатель{% else %}Трансформатор{% endif %}</td>
+            <td class="text-right">{{ item.name }}</td>
+            <td class="text-center">{% if item.amperage == 'variable' %}переменный ток{% else %}постоянный ток{% endif %}</td>
+            <td class="text-center">{{ item.p }}</td>
+            <td class="text-center">{{ item.u }}</td>
+            <td class="text-center">{{ item.n }}</td>
+            <td class="text-center">{% if item.unn %}{{ item.unn }}{% endif %}</td>
+            <td class="text-center">{% if item.uvn %}{{ item.uvn }}{% endif %}</td>
+        </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block pagination %}
+    {% rb_pagination list_clients 'rbooks' 'getlist_equipment' %}
+{% endblock %}

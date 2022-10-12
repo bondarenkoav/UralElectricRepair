@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load bootstrap4 tasks_tags %}
+
+{% block page_title %}
+    {% get_repairnum task_data.model_name task_data.record_id as equipment %}
+    Задача <span class="text-muted">{{ task_data.title }}  РН №{{ equipment.repairnum }}</span>
+{% endblock %}
+
+{% block content %}
+    <div class="x_panel">
+        <div class="x_content">
+            <div class="container">
+                <dl class="row">
+                    {% get_repairnum task_data.model_name task_data.record_id as equipment %}
+                    <dt class="col-sm-3">
+                        {% if equipment.equipment.type == 'engine' %}Эл. двигатель
+                        {% elif equipment.equipment.type == 'transformer' %}Трансформатор
+                        {% else %}Другое
+                        {% endif %}
+                    </dt>
+                    <dd class="col-sm-9">{{ equipment.equipment.name }}</dd>
+
+                    <dt class="col-sm-3">Ток</dt>
+                    <dd class="col-sm-9">
+                        {% if equipment.equipment.amperage == 'variable' %}переменный
+                        {% else %}постоянный
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-sm-3">Мощность</dt>
+                    <dd class="col-sm-9">{{ equipment.equipment.p }} кВт</dd>
+
+                    <dt class="col-sm-3">Напряжение</dt>
+                    <dd class="col-sm-9">{{ equipment.equipment.u }} В</dd>
+
+                    <dt class="col-sm-3">Обороты</dt>
+                    <dd class="col-sm-9">{{ equipment.equipment.n }} об.мин.</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="x_panel">
+        <div class="x_content">
+            <div class="container">
+                <dl class="row">
+                    <dt class="col-sm-3">Наименование задачи</dt>
+                    <dd class="col-sm-9">{{ task_data.description }}</dd>
+
+                    <dt class="col-sm-3">Автор</dt>
+                    <dd class="col-sm-9">{{ task_data.author }}</dd>
+                    {% if task_data.executor %}
+                        <dt class="col-sm-3">Исполнитель</dt>
+                        <dd class="col-sm-9">{{ task_data.executor }}</dd>
+                    {% else %}
+                        <dt class="col-sm-3">Группа исполнителей</dt>
+                        <dd class="col-sm-9">{{ task_data.group_executor }}</dd>
+                    {% endif %}
+
+                    {% if task_data.date_limit %}
+                        <dt class="col-sm-3">Срок до</dt>
+                        <dd class="col-sm-9">{{ task_data.date_limit }}</dd>
+                    {% endif %}
+
+                    <dt class="col-sm-3">Статус</dt>
+                    <dd class="col-sm-9">{{ task_data.status.name }}</dd>
+
+                    <dt class="col-sm-3">Создано</dt>
+                    <dd class="col-sm-9">{{ task_data.datetime_add }}</dd>
+                    <dt class="col-sm-3">Обновлено</dt>
+                    <dd class="col-sm-9">{{ task_data.datetime_update }}</dd>
+                </dl>
+                <div class="text-center">
+                    <a href="{{ task_data.path }}" class="btn btn-link">Перейти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

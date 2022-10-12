@@ -1,0 +1,76 @@
+{% extends 'page.html' %}
+{% load staticfiles bootstrap4 staticfiles %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-header">
+                        Пользователь системы
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ profile.user.last_name }} {{ profile.user.first_name }}</h5>
+                        <p class="card-text">
+                            <img src="{% static 'img/avatar-2.jpg' %}" alt="..." class="img-thumbnail">
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">История профиля</h5>
+                        <div class="card-text">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="background-color: #d3d9df">Логин:</th>
+                                        <td>{{ profile.user.username }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" style="background-color: #d3d9df">Фамилия:</th>
+                                        <td>{{ profile.user.last_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" style="background-color: #d3d9df">Имя и отчество:</th>
+                                        <td>{{ profile.user.first_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" style="background-color: #d3d9df">Эл.почта:</th>
+                                        <td>{{ profile.user.username }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" style="background-color: #d3d9df">Зарегистрирован:</th>
+                                        <td>{{ profile.user.date_joined }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" style="background-color: #d3d9df">Место нахождения:</th>
+                                        <td>{{ profile.location }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th scope="row" style="background-color: #d3d9df">Дата рождения:</th>
+                                        <td>{{ profile.birthday }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" style="background-color: #d3d9df">Доступ к сервисным компаниям:</th>
+                                        <td>
+                                            {% for item in profile.scompany.all %}
+                                                {{ item.Name }}
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" style="background-color: #d3d9df">Телефон:</th>
+                                        <td>{{ profile.phone }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

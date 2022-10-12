@@ -1,0 +1,26 @@
+{% extends 'container.html' %}
+{% load paginator_tags %}
+
+{% block page_title %}Список передатчиков{% endblock %}
+{% block add_object_url %}{% url 'reference_books:addget_transmitter' %}{% endblock %}
+{% block add_object_name %}передатчик{% endblock %}
+
+{% block table_head %}
+    <td style="width: 10%;">№ п/п</td>
+    <td style="width: 40%;">Модель передатчика</td>
+    <td style="width: 50%;">Наименование ПЦН</td>
+{% endblock %}
+
+{% block table_body %}
+    {% for item in list_transmitters %}
+        <tr id="obj_{{ item.id }}" onclick="location.href = '{% url 'reference_books:addget_transmitter' item.id %}';">
+            <td class="text-center">{{ item.id }}</td>
+            <td class="text-right">{{ item.Name }}</td>
+            <td class="text-right">{{ item.SystemPCN }}</td>
+        </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block pagination %}
+    {% rb_pagination list_transmitters 'reference_books' 'get_transmitters' %}
+{% endblock %}

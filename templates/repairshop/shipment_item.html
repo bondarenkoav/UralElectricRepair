@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static bootstrap4 %}
+{% block include_header %}
+    <script language="JavaScript">
+        $(document).on('submit', '.client-form', function(){
+            $.ajax({
+                type: "POST",
+                url: "ajax_add_client/",
+                data: $(this),
+
+                success: function(json) {
+                    $('#results').html("Контрагент " + json.name_client + ' ' + json.msg)
+                    {#$('#ClientModal').modal('hide');#}
+                },
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html('<div class="alert-box alert radius" data-alert>Oops! We have encountered an error: '+errmsg+
+                        ' <a href="#" class="close">&times;</a></div>'); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="x_panel">
+                <div class="x_content">
+                    {% bootstrap_form_errors form %}
+                    <form action="{% url 'production:add-shipment' %}" method="post" class="form" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-4" style="padding-top: 5px;">
+                                    {% bootstrap_label "Номер спецификации" label_for="specificationnum" %}
+                                </div>
+                                <div class="col-8">
+                                    {% bootstrap_field form.specificationnum layout='inline' %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-4" style="padding-top: 5px;">
+                                    {% bootstrap_label "Контргент" label_for="client" %}
+                                </div>
+                                <div class="col-6">
+                                    {% bootstrap_field form.client layout='inline' %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-4" style="padding-top: 5px;">
+                                    {% bootstrap_label "Дата поставки" label_for="dateshipment" %}
+                                </div>
+                                <div class="col-8">
+                                    {% bootstrap_field form.dateshipment layout='inline' %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-4" style="padding-top: 5px;">
+                                    {% bootstrap_label "Фотография" label_for="photo" %}
+                                </div>
+                                <div class="col-8">
+                                    {% bootstrap_field form.photo layout='inline' %}
+                                </div>
+                            </div>
+                        </div>
+                        {% buttons %}
+                            <a class="btn btn-warning float-left" href="{% url 'dashboard:index' %}" role="button">Отменить</a>
+                            {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary float-right" %}
+                        {% endbuttons %}
+                    </form>
+                    <!-- Modal -->
+                    <div class="modal fade" id="ClientModal" tabindex="-1" role="dialog" aria-labelledby="ClientModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form class="client-form" action="{% url 'ajax_add_client' %}" method="Post">
+                                    {% csrf_token %}
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="ClientModalLabel">Ввод нового контрагента</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        {% bootstrap_form form_addclient layout='horizontal' %}
+                                        <div class="results"></div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" id="btn-close-model" class="btn btn-warning float-left" data-dismiss="modal">Закрыть</button>
+                                        {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary float-right" %}
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal -->
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

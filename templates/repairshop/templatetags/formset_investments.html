@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load bootstrap4 repairshop_tags %}
+
+{% block page_title %}
+    <a class="btn btn-link" href="{% url 'production:scopeshipment-update' sc_data.id %}" role="button">
+        <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Вернуться</a>
+    {{ title }} <small>{{ title_small }}</small>
+{% endblock %}
+
+{% block content %}
+    <div class="x_panel">
+        <div class="x_content">
+            <table class="table table-bordered table-sm">
+                <form action="{% url 'production:update-investments-tab' sc_data.id %}" method="post" class="form" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% bootstrap_messages %}
+                    {{ formset.management_form }}
+                    {% for form in formset.forms %}
+                        {% get_techprocess_data 'investments' form.instance.id as data_iv %}
+                        {% if forloop.first %}
+                            <thead>
+                                <tr class="text-center">
+                                    <th style="width: 15%;">Код</th>
+                                    <th style="width: 50%;">Файл</th>
+                                    <th style="width: 35%;">Замечание</th>
+{#                                    <th style="width: 5%;"><i class="fa fa-trash-o fa-2x" aria-hidden="true"></i></th>#}
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="7" class="float-right">
+                                        {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary" %}
+                                    </td>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                        {% endif %}
+                        <tr class="formset_row p-0 m-0">
+                            <td class="pt-2">
+                                {% bootstrap_field form.id layout='inline' %}
+                                {% bootstrap_field form.key layout='inline' %}
+                            </td>
+                            <td>
+                                {% if data_iv.file %}
+                                    <a href="{% url 'production:get-file' 'investments' data_iv.id %}" target="_blank">
+                                        {% get_icon_file_ext data_iv.file.url %} {{ data_iv.file }}
+                                    </a>
+                                {% else %}
+                                    {% bootstrap_field form.file layout='inline' field_class='form-control-sm' %}
+                                {% endif %}
+                            </td>
+                            <td>{% bootstrap_field form.comment layout='inline' field_class='form-control-sm' %}</td>
+{#                            <td>{% bootstrap_field form.DELETE layout='inline' %}</td>#}
+                        </tr>
+                        </tbody>
+                    {% endfor %}
+                </form>
+            </table>
+        </div>
+    </div>
+{% endblock %}

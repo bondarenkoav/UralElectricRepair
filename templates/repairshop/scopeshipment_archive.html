@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load static repairshop_tags %}
+
+{% block include_header %}
+    <style>
+        .form-control-sm{
+            padding: .25rem .0rem;
+        }
+        ul.bar_tabs>li a {
+            padding: 5px 5px;
+        }
+        .list-group-item{
+            padding: 0.50rem 1rem 0.5rem;
+        }
+    </style>
+{% endblock %}
+
+{% block page_title %}
+    <a class="btn btn-link" href="{% url 'production:getlist-scopeshipment-archive' %}" role="button">
+        <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Вернуться</a>
+    Ремонтный №{{ sc_data.repairnum }} от {{ sc_data.shipment.dateshipment }}
+{% endblock %}
+
+{% block content %}
+    <form action="{% url 'production:scopeshipment-update' sc_data.pk %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+        <div class="x_panel">
+            <div class="x_content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-2 pt-1">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item h5 p-0">
+                                    <a class="btn btn-link count_bottom text-left" href="{% url 'dashboard:index' %}">
+                                        {{ sc_data.equipment.name }}
+                                    </a>
+                                </li>
+                                <li class="list-group-item"><strong>Ток</strong>: {% if sc_data.equipment.amperage == 'variable' %}переменный ток{% else %}постоянный ток{% endif %}</li>
+                                <li class="list-group-item">P: {{ sc_data.equipment.p }} кВт</li>
+                                <li class="list-group-item">U: {{ sc_data.equipment.u }} В</li>
+                                <li class="list-group-item">n: {{ sc_data.equipment.n }} об/мин</li>
+                            </ul>
+                        </div>
+                        <div class="col-3 pt-2">
+                            <dl class="row">
+                                <dt class="col-sm-7">Участок:</dt>
+                                <dd class="col-sm-5">
+                                    {% if sc_data.section == 'upto100kvt' %}
+                                        До 100 кВт
+                                    {% elif sc_data.section == 'from100kvt' %}
+                                        Свыше 100 кВт
+                                    {% elif sc_data.section == 'from100kvt' %}
+                                        Прочие
+                                    {% endif %}
+                                </dd>
+                                <dt class="col-sm-7">Срочность ремонта</dt>
+                                <dd class="col-sm-5">{{ sc_data.urgency }}</dd>
+                                <dt class="col-sm-7">Срок консервации</dt>
+                                <dd class="col-sm-5">{{ sc_data.conservation_time }}</dd>
+                                <dt class="col-sm-7">Статус ремонта</dt>
+                                <dd class="col-sm-5">{{ sc_data.status }}</dd>
+                                <dt class="col-sm-7">Смета:</dt>
+                                <dd class="col-sm-5">{{ sc_data.estimate|yesno:"Да,Нет" }}</dd>
+                                <dt class="col-sm-7">Заказ на производство:</dt>
+                                <dd class="col-sm-5">{{ sc_data.order|yesno:"Да,Нет" }}</dd>
+                                <dt class="col-sm-7">Архив:</dt>
+                                <dd class="col-sm-5">{{ sc_data.archive|yesno:"Да,Нет" }}</dd>
+                            </dl>
+                        </div>
+                        <div class="col-3 pt-2">
+                            <dl class="row">
+                                <dt class="col-sm-7">Срок разборки</dt>
+                                <dd class="col-sm-5">{{ sc_data.disassembly_time|default_if_none:"Нет" }}</dd>
+                                <dt class="col-sm-7">Срок дефектовка</dt>
+                                <dd class="col-sm-5">{{ sc_data.faultdetection_time|default_if_none:"Нет" }}</dd>
+                                <dt class="col-sm-7">Срок склад</dt>
+                                <dd class="col-sm-5">{{ sc_data.storage_time|default_if_none:"Нет" }}</dd>
+                                <dt class="col-sm-7">Срок полюса:</dt>
+                                <dd class="col-sm-5">{{ sc_data.poles_time|default_if_none:"Нет" }}</dd>
+                                <dt class="col-sm-7">Срок полюса:</dt>
+                                <dd class="col-sm-5">{{ sc_data.sections_time|default_if_none:"Нет" }}</dd>
+                                <dt class="col-sm-7">Срок индуктор/статор:</dt>
+                                <dd class="col-sm-5">{{ sc_data.inductor_time|default_if_none:"Нет" }}</dd>
+                                <dt class="col-sm-7">Срок якорь/ротор:</dt>
+                                <dd class="col-sm-5">{{ sc_data.inductor_time|default_if_none:"Нет" }}</dd>
+                                <dt class="col-sm-7">Срок щиты:</dt>
+                                <dd class="col-sm-5">{{ sc_data.shields_time|default_if_none:"Нет" }}</dd>
+                                <dt class="col-sm-7">Срок вал:</dt>
+                                <dd class="col-sm-5">{{ sc_data.spindle_time|default_if_none:"Нет" }}</dd>
+                                <dt class="col-sm-7">Срок комплектования:</dt>
+                                <dd class="col-sm-5">{{ sc_data.completing_time|default_if_none:"Нет" }}</dd>
+                                <dt class="col-sm-7">Срок щиты:</dt>
+                                <dd class="col-sm-5">{{ sc_data.assembly_time|default_if_none:"Нет" }}</dd>
+                                <dt class="col-sm-7">Срок консервации:</dt>
+                                <dd class="col-sm-5">{{ sc_data.conservation_time|default_if_none:"Нет" }}</dd>
+                            </dl>
+                        </div>
+                        <div class="col-4 pt-2">
+                            <div class="overflow-auto pt-0" style="max-height: 130px;">
+                                <ul id="talk" class="list-group list-group-flush">
+                                    {% for post in comments %}
+                                        <li class="list-group-item {% if request.user == post.create_user %}disabled{% endif %}"><strong>{{ post.text }}</strong> - <em>{{ post.create_user }}</em> - <small>{{ post.datetime_add|date:"d.m.Y H:i" }}</small></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="width: 100%;">
+            <div class="x_panel pl-1 pr-1">
+                <div class="x_content">
+                    <div class="container">
+                        <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="disassembly-tab" data-toggle="tab" href="#disassembly" role="tab" aria-controls="disassembly" aria-selected="true">
+                                    {% if sc_data.complete_disassembly %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Разбор
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="faultdetection-tab" data-toggle="tab" href="#faultdetection" role="tab" aria-controls="troubleshooting" aria-selected="true">
+                                    {% if sc_data.complete_faultdetection %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Дефектовка
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="mechanics-tab" data-toggle="tab" href="#mechanics" role="tab" aria-controls="mechanics" aria-selected="false">
+                                    {% if sc_data.complete_mechanics %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Механика
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tests-tab" data-toggle="tab" href="#tests" role="tab" aria-controls="tests" aria-selected="false">
+                                    {% if sc_data.complete_tests %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Испытания
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="store-tab" data-toggle="tab" href="#store" role="tab" aria-controls="store" aria-selected="false">Склад</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="poles-tab" data-toggle="tab" href="#poles" role="tab" aria-controls="poles" aria-selected="false">
+                                    {% if sc_data.complete_poles %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Полюса
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="sections-tab" data-toggle="tab" href="#sections" role="tab" aria-controls="sections" aria-selected="false">
+                                    {% if sc_data.complete_sections %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Секции
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="inductor-tab" data-toggle="tab" href="#inductor" role="tab" aria-controls="inductor" aria-selected="false">
+                                    {% if sc_data.complete_inductor %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %}
+                                    {% if sc_data.equipment.amperage == 'steady' %}Индуктор{% else %}Статор{% endif %}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="anchor-tab" data-toggle="tab" href="#anchor" role="tab" aria-controls="anchor" aria-selected="false">
+                                    {% if sc_data.complete_inductor %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %}
+                                    {% if sc_data.equipment.amperage == 'steady' %}Якорь{% else %}Ротор{% endif %}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="shields-tab" data-toggle="tab" href="#shields" role="tab" aria-controls="shields" aria-selected="false">
+                                    {% if sc_data.complete_shields %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Щиты
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="spindle-tab" data-toggle="tab" href="#spindle" role="tab" aria-controls="spindle" aria-selected="false">
+                                    {% if sc_data.complete_spindle %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Вал
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="completing-tab" data-toggle="tab" href="#completing" role="tab" aria-controls="completing" aria-selected="false">
+                                    {% if sc_data.complete_completing %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Комплектующие
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="assembly-tab" data-toggle="tab" href="#assembly" role="tab" aria-controls="assembly" aria-selected="false">
+                                    {% if sc_data.complete_assembly %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Сборка
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="investments-tab" data-toggle="tab" href="#investments" role="tab" aria-controls="investments" aria-selected="false">Вложения</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="disassembly" role="tabpanel" aria-labelledby="disassembly-tab">
+                                {% get_table_disassembly sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="faultdetection" role="tabpanel" aria-labelledby="faultdetection-tab">
+                                {% get_table_faultdetection sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="mechanics" role="tabpanel" aria-labelledby="mechanics-tab">
+                                {% get_table_mechanics sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="tests" role="tabpanel" aria-labelledby="tests-tab">
+                                {% get_table_tests sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="store" role="tabpanel" aria-labelledby="store-tab">
+                                {% get_table_storage sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="poles" role="tabpanel" aria-labelledby="poles-tab">
+                                {% get_table_poles sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="sections" role="tabpanel" aria-labelledby="sections-tab">
+                                {% get_table_sections sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="inductor" role="tabpanel" aria-labelledby="inductor-tab">
+                                {% get_table_inductor sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="anchor" role="tabpanel" aria-labelledby="anchor-tab">
+                                {% get_table_anchor sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="shields" role="tabpanel" aria-labelledby="shields-tab">
+                                {% get_table_shields sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="spindle" role="tabpanel" aria-labelledby="spindle-tab">
+                                {% get_table_spindle sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="completing" role="tabpanel" aria-labelledby="completing-tab">
+                                {% get_table_completing sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="assembly" role="tabpanel" aria-labelledby="assembly-tab">
+                                {% get_table_assembly sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="investments" role="tabpanel" aria-labelledby="investments-tab">
+                                {% get_table_investments sc_data.id %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

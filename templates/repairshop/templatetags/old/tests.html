@@ -1,0 +1,48 @@
+{% load bootstrap4 repairshop_tags %}
+
+<table class="table table-bordered table-sm">
+    {{ formset.management_form }}
+    {% for form in formset.forms %}
+        {% get_techprocess_data techprocess form.instance.id as data_t %}
+        {% if forloop.first %}
+            <thead>
+                <tr class="text-center">
+                    <th style="width: 25%;">Показания</th>
+                    <th style="width: 20%;">Статор</th>
+                    <th style="width: 15%;">Тип беличья клетка ротора<br/>(литой, сварной)</th>
+                    <th style="width: 15%;">Токосъёмные кольца</th>
+                    <th style="width: 15%;">Исполнитель</th>
+                    <th style="width: 3%;"><i class="fa fa-check" aria-hidden="true"></i></th>
+                    <th style="width: 5%;">Фото</th>
+                    <th style="width: 2%;"><i class="fa fa-trash-o fa-2x" aria-hidden="true"></i></th>
+                </tr>
+            </thead>
+        {% endif %}
+        <tr class="formset_row p-0 m-0 {% if data_t.complete == True %}table-success{% endif %}">
+            <td class="pt-1">
+                {% bootstrap_field form.id layout='inline' %}
+                {% bootstrap_field form.equipment layout='inline' %}
+                {% bootstrap_field form.indications layout='inline' field_class='form-control-sm' %}
+            </td>
+            <td>{% bootstrap_field form.stator layout='inline' field_class='form-control-sm' %}</td>
+            <td>{% bootstrap_field form.rotor_cage layout='inline' field_class='form-control-sm' %}</td>
+            <td>{% bootstrap_field form.rings layout='inline' field_class='form-control-sm' %}</td>
+            <td>
+                {% if data_t.accepted %}
+                    {{ data_t.executor }}
+                {% else %}
+                    {% bootstrap_field form.executor layout='inline' field_class='form-control-sm' %}
+                {% endif %}
+            </td>            
+            <td>
+                {% if data_ds.complete %}
+                    {{ data_t.date_complete|date:"d.m.Y" }} {{ data_t.date_complete|time:"H:i" }}
+                {% else %}
+                    <span class="h4">нет</span>
+                {% endif %}
+            </td>
+            <td></td>
+            <td>{% bootstrap_field form.DELETE layout='inline' %}</td>
+        </tr>
+    {% endfor %}
+</table>

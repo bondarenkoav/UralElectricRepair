@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load staticfiles bootstrap4 %}
+
+{% block body_style %}overflow: visible;{% endblock %}
+
+{% block content %}
+    <div class="accountbg"></div>
+    <div class="wrapper-page">
+        <div class="card" style="width: 600px; margin-left: -100px;">
+            <div class="card-header" style="height: 80px;">
+                <div class="row">
+                    <div class="col-6">
+                        <h3 class="text-center mt-0 m-b-15">
+                            <a href="{% url 'dashboard:index' %}" class="logo logo-admin">
+                                <img src="{% static "img/logo-dark.png" %}" height="30" alt="logo">
+                            </a>
+                        </h3>
+                    </div>
+                    <div class="col-6" style="margin-top: 10px;">
+                        <h4 class="text-muted text-center font-18"><b>Добавление аккаунта</b></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="p-3" style="margin-top: -20px;">
+                    <form class="form-horizontal m-t-20" action="{% url 'register_account' %}" method="post">
+                        {% csrf_token %}
+                        {% bootstrap_form_errors form %}
+                        <div class="form-group row">
+                            <div class="col-4">
+                                {% bootstrap_label "ФИО (полностью)" label_for="last_name" %}
+                            </div>
+                            <div class="col-4">
+                                {% bootstrap_field form.last_name layout='inline' %}
+                            </div>
+                            <div class="col-4">
+                                {% bootstrap_field form.first_name layout='inline' %}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-4">
+                                {% bootstrap_label "Дата рождения" label_for="first_name" %}
+                            </div>
+                            <div class="col-8">
+                                {% bootstrap_field form.birthday layout='inline' %}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-4">
+                                {% bootstrap_label "Пароль" label_for="birthday" %}
+                                <i class="fa fa-info" aria-hidden="true" style="text-shadow: 1px 1px 2px black, 0 0 1em white;"
+                                   data-toggle="tooltip" data-placement="left" title="Пароль должен состоять из цифр, букв латинского алфавита в различных регистрах. Не менее 8 символов.">
+                                </i>
+                            </div>
+                            <div class="col-4">
+                                {% bootstrap_field form.pass_new layout='inline' %}
+                            </div>
+                            <div class="col-4">
+                                {% bootstrap_field form.pass_repeat layout='inline' %}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-4">
+                                {% bootstrap_label "Должность" label_for="post" %}
+                            </div>
+                            <div class="col-8">
+                                {% bootstrap_field form.post layout='inline' %}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-4">
+                                {% bootstrap_label "Телефон" label_for="post" %}
+                            </div>
+                            <div class="col-8">
+                                {% bootstrap_field form.phone layout='inline' %}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-4">
+                                {% bootstrap_label "Организация" label_for="post" %}
+                            </div>
+                            <div class="col-8">
+                                {% bootstrap_field form.scompany layout='inline' %}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-4">
+                                {% bootstrap_label "Город пребывания" label_for="first_name" %}
+                            </div>
+                            <div class="col-8">
+                                {% bootstrap_field form.location layout='inline' %}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-8" style="margin-top: 5px;">
+                                {% bootstrap_field form.personal_data %}
+                            </div>
+                            <div class="col-4">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" style="width: 100%;">Ознакомится</button>
+                                <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLongTitle">Соглашение на обработку персональных данных</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>В соответствии с требованиями Федерального закона от 27.07.2006 г. № 152-ФЗ "О персональных данных" пользователь веб-приложения АРМ 'Заявки'
+                                                    выражает согласие на обработку своих персональных данных администрацией в лице ООО "ЧОП Амулет-ПЦО" без оговорок и ограничений,
+                                                    совершение с персональными данными пользователя действий, предусмотренных п.3 ч.1 ст.3 Федерального закона от 27.07.2006 г. №152-ФЗ "О персональных данных",
+                                                    и подтверждает, что, давая такое согласие, действует свободно, по своей воле и в своих интересах.</p>
+                                                <p>Перечень персональных данных, на обработку которых предоставляется согласие: Фамилию, имя, отчество, место пребывания, номер телефона, дату рождения.</p>
+                                                <p>Пользователь выражает свое согласие на осуществление со всеми указанными персональными данными следующих действий: сбор, систематизация, накопление, дату рождения, хранение,
+                                                    уточнение (обновление или изменение), использование, обезличивание, блокирование, уничтожение.</p>
+                                                <p>А также осуществление любых иных действий с персональными данными в соответствии с действующим законодательством.</p>
+                                                <p>Обработка данных может осуществляться как с использованием средств автоматизации, так и без их использования (при неавтоматической обработке).
+                                                    При обработке персональных данных администрация веб-приложения АРМ 'Заявки' не ограничена в применении способов их обработки.</p>
+                                                <p>Пользователь признает и подтверждает, что администрация веб-приложения АРМ 'Заявки' вправе предоставлять персональные данные
+                                                    пользователя третьим лицам исключительно в целях оказания услуг технической поддержки, а такие третьи лица имеют
+                                                    право на обработку персональных данных на основании настоящего согласия.</p>
+                                                <p>Данное согласие действует до даты его отзыва путем направления подписанного пользователем соответствующего письменного заявления,
+                                                    которое может быть направлено в адрес администрации ресурса АРМ 'Заявки' по почте заказным письмом с уведомлением о вручении,
+                                                    либо вручено лично под расписку надлежаще уполномоченному представителю веб-приложения АРМ 'Заявки'.</p>
+                                                <p>В случае получения письменного заявления пользователя об отзыве настоящего согласия на обработку персональных данных,
+                                                    администрация веб-приложения АРМ 'Заявки' обязана прекратить их обработку и исключить персональные данные из базы данных, в том числе электронной.</p>
+                                                <p>Пользователь осознает, что использование веб-приложения АРМ 'Заявки' является автоматическим принятием данного Соглашения и согласием с описанными в нем условиями.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group text-center row m-t-20">
+                            <div class="col-12">
+                                {% bootstrap_button "Создать" button_type="submit" button_class="btn btn-info btn-block waves-effect waves-light" %}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

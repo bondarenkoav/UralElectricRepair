@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+{% load static bootstrap4 repairshop_tags %}
+
+{% block include_header %}
+    <style>
+        .form-control-sm{
+            padding: .25rem .0rem;
+        }
+        ul.bar_tabs>li a {
+            padding: 5px 5px;
+        }
+        .list-group-item{
+            padding: 0.50rem 1rem 0.5rem;
+        }
+    </style>
+    <script>
+        function add_comment() {
+            console.log("create post is working!");
+            $.ajax({
+                type: "POST",
+                url: "{% url 'production:add-scopeshipment-comment' sc_data.id %}",
+                data: {'the_post': document.getElementById('post-text').value},
+                // handle a successful response
+                success : function(json) {
+                    $('#post-text').val(''); // remove the value from the input
+                    console.log(json); // log the returned json to the console
+                    $("#talk").prepend('<li class="list-group-item disabled"><strong>'+json.text+'</strong> - <em>Вы, только что</em></li>');
+                    console.log("success"); // another sanity check
+                },
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html('<div class="alert alert-warning alert-dismissible fade show" role="alert">Ой! Ошибочка вышла: '+errmsg+' <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+        }
+        function fill_tabs(template_name) {
+            template_id = document.getElementById(template_name).value;
+            if (template_id!=='') {
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'production:fill_tabs' sc_data.id %}",
+                    data: {'template_id': template_id},
+                    success: function () {
+                        location.reload();
+                    }
+                });
+                return false;
+            }
+        }
+    </script>
+{% endblock %}
+
+{% block page_title %}
+    <a class="btn btn-link" href="{{ url_listengines }}" role="button">
+        <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Вернуться</a>
+    Ремонтный №{{ sc_data.repairnum }} от {{ sc_data.shipment.dateshipment }}
+{% endblock %}
+
+{% block content %}
+    <form action="{% url 'production:scopeshipment-update' sc_data.pk %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+        <div class="x_panel">
+            <div class="x_content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-2 pt-1">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item h5 p-0">
+                                    <a class="btn btn-link count_bottom text-left" href="{% url 'dashboard:index' %}">
+                                        {{ sc_data.equipment.name }}
+                                    </a>
+                                </li>
+                                <li class="list-group-item"><strong>Ток</strong>: {% if sc_data.equipment.amperage == 'variable' %}переменный ток{% else %}постоянный ток{% endif %}</li>
+                                <li class="list-group-item">P: {{ sc_data.equipment.p }} кВт</li>
+                                <li class="list-group-item">U: {{ sc_data.equipment.u }} В</li>
+                                <li class="list-group-item">n: {{ sc_data.equipment.n }} об/мин</li>
+                            </ul>
+                        </div>
+                        <div class="col-3 pt-2">
+                            {% bootstrap_field form.section layout='horizontal' %}
+                            {% bootstrap_field form.urgency layout='horizontal' %}
+                            {% bootstrap_field form.conservation_time layout='horizontal' %}
+                            {% bootstrap_field form.status layout='horizontal' %}
+                        </div>
+                        <div class="col-2 pt-2">
+                            {% bootstrap_field form.estimate layout='inline' %}
+                            {% bootstrap_field form.order layout='inline' %}
+                            {% bootstrap_field form.archive layout='inline' %}
+                            {% bootstrap_field form.equipment layout='inline' %}
+                        </div>
+                        <div class="col-4 pt-2">
+                            <div class="input-group mb-0" id="the_post">
+                                <input type="text" class="form-control" id="post-text" placeholder="Замечание" aria-label="Recipient's username" aria-describedby="button-addon2">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="add_comment()">Добавить</button>
+                                </div>
+                            </div>
+                            <div class="overflow-auto pt-0" style="max-height: 130px;">
+                                <ul id="talk" class="list-group list-group-flush">
+                                    {% for post in comments %}
+                                        <li class="list-group-item {% if request.user == post.create_user %}disabled{% endif %}"><strong>{{ post.text }}</strong> - <em>{{ post.create_user }}</em> - <small>{{ post.datetime_add|date:"d.m.Y H:i" }}</small></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-1 pt-2">
+                            {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="width: 100%;">
+            <div class="x_panel pl-1 pr-1">
+                <div class="x_content">
+                    <div class="container">
+                        <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="disassembly-tab" data-toggle="tab" href="#disassembly" role="tab" aria-controls="disassembly" aria-selected="true">
+                                    {% if sc_data.complete_disassembly %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Разбор
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="faultdetection-tab" data-toggle="tab" href="#faultdetection" role="tab" aria-controls="troubleshooting" aria-selected="true">
+                                    {% if sc_data.complete_faultdetection %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Дефектовка
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="mechanics-tab" data-toggle="tab" href="#mechanics" role="tab" aria-controls="mechanics" aria-selected="false">
+                                    {% if sc_data.complete_mechanics %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Механика
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tests-tab" data-toggle="tab" href="#tests" role="tab" aria-controls="tests" aria-selected="false">
+                                    {% if sc_data.complete_tests %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Испытания
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="store-tab" data-toggle="tab" href="#store" role="tab" aria-controls="store" aria-selected="false">Склад</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="poles-tab" data-toggle="tab" href="#poles" role="tab" aria-controls="poles" aria-selected="false">
+                                    {% if sc_data.complete_poles %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Полюса
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="sections-tab" data-toggle="tab" href="#sections" role="tab" aria-controls="sections" aria-selected="false">
+                                    {% if sc_data.complete_sections %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Секции
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="inductor-tab" data-toggle="tab" href="#inductor" role="tab" aria-controls="inductor" aria-selected="false">
+                                    {% if sc_data.complete_inductor %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %}
+                                    {% if sc_data.equipment.amperage == 'steady' %}Индуктор{% else %}Статор{% endif %}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="anchor-tab" data-toggle="tab" href="#anchor" role="tab" aria-controls="anchor" aria-selected="false">
+                                    {% if sc_data.complete_inductor %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %}
+                                    {% if sc_data.equipment.amperage == 'steady' %}Якорь{% else %}Ротор{% endif %}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="shields-tab" data-toggle="tab" href="#shields" role="tab" aria-controls="shields" aria-selected="false">
+                                    {% if sc_data.complete_shields %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Щиты
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="spindle-tab" data-toggle="tab" href="#spindle" role="tab" aria-controls="spindle" aria-selected="false">
+                                    {% if sc_data.complete_spindle %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Вал
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="completing-tab" data-toggle="tab" href="#completing" role="tab" aria-controls="completing" aria-selected="false">
+                                    {% if sc_data.complete_completing %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Комплектующие
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="assembly-tab" data-toggle="tab" href="#assembly" role="tab" aria-controls="assembly" aria-selected="false">
+                                    {% if sc_data.complete_assembly %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %} Сборка
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="investments-tab" data-toggle="tab" href="#investments" role="tab" aria-controls="investments" aria-selected="false">Вложения</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="disassembly" role="tabpanel" aria-labelledby="disassembly-tab">
+                                {% include 'repairshop/templatetags/templates_field.html' with term=form.disassembly_time all_complete=form.complete_disassembly update_urls='production:update-disassembly-tab' sc_id=sc_data.id %}
+                                {% get_table_disassembly sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="faultdetection" role="tabpanel" aria-labelledby="faultdetection-tab">
+                                {% include 'repairshop/templatetags/templates_field.html' with label="faultdetection_tpl" term=form.faultdetection_time tpl=form.faultdetection_tpl all_complete=form.complete_faultdetection js="fill_tabs('id_faultdetection_tpl')" update_urls='production:update-faultdetection-tab' sc_id=sc_data.id %}
+                                {% get_table_faultdetection sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="mechanics" role="tabpanel" aria-labelledby="mechanics-tab">
+                                {% include 'repairshop/templatetags/templates_field.html' with label="mechanics_tpl"  tpl=form.mechanics_tpl all_complete=form.complete_mechanics js="fill_tabs('id_mechanics_tpl')" update_urls='production:update-mechanics-tab' sc_id=sc_data.id %}
+                                {% get_table_mechanics sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="tests" role="tabpanel" aria-labelledby="tests-tab">
+                                {% include 'repairshop/templatetags/templates_field.html' with label="tests_tpl" tpl=form.tests_tpl all_complete=form.complete_tests js="fill_tabs('id_tests_tpl')" update_urls='production:update-tests-tab' sc_id=sc_data.id %}
+                                {% get_table_tests sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="store" role="tabpanel" aria-labelledby="store-tab">
+                                {% include 'repairshop/templatetags/templates_field.html' with term=form.storage_time update_urls='production:update-storage-tab' sc_id=sc_data.id %}
+                                {% get_table_storage sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="poles" role="tabpanel" aria-labelledby="poles-tab">
+                                {% include 'repairshop/templatetags/templates_field.html' with label="poles_tpl" stage=form.stage_poles term=form.poles_time tpl=form.poles_tpl all_complete=form.complete_poles js="fill_tabs('id_poles_tpl')" update_urls='production:update-poles-tab' sc_id=sc_data.id %}
+                                {% get_table_poles sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="sections" role="tabpanel" aria-labelledby="sections-tab">
+                                {% include 'repairshop/templatetags/templates_field.html' with label="sections_tpl" stage=form.stage_sections term=form.sections_time tpl=form.sections_tpl all_complete=form.complete_sections js="fill_tabs('id_sections_tpl')" update_urls='production:update-sections-tab' sc_id=sc_data.id %}
+                                {% get_table_sections sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="inductor" role="tabpanel" aria-labelledby="inductor-tab">
+                                {% include 'repairshop/templatetags/templates_field.html' with label="inductor_tpl" stage=form.stage_inductor term=form.inductor_time tpl=form.inductor_tpl all_complete=form.complete_inductor js="fill_tabs('id_inductor_tpl')" update_urls='production:update-inductor-tab' sc_id=sc_data.id %}
+                                {% get_table_inductor sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="anchor" role="tabpanel" aria-labelledby="anchor-tab">
+                                {% include 'repairshop/templatetags/templates_field.html' with label="anchor_tpl" stage=form.stage_anchor term=form.anchor_time tpl=form.anchor_tpl all_complete=form.complete_anchor js="fill_tabs('id_anchor_tpl')" update_urls='production:update-anchor-tab' sc_id=sc_data.id %}
+                                {% get_table_anchor sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="shields" role="tabpanel" aria-labelledby="shields-tab">
+                                {% include 'repairshop/templatetags/templates_field.html' with label="shields_tpl" stage=form.stage_shields term=form.shields_time tpl=form.shields_tpl all_complete=form.complete_shields js="fill_tabs('id_shields_tpl')" update_urls='production:update-shields-tab' sc_id=sc_data.id %}
+                                {% get_table_shields sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="spindle" role="tabpanel" aria-labelledby="spindle-tab">
+                                {% include 'repairshop/templatetags/templates_field.html' with label="spindle_tpl" stage=form.stage_spindle term=form.spindle_time tpl=form.spindle_tpl all_complete=form.complete_spindle js="fill_tabs('id_spindle_tpl')" update_urls='production:update-spindle-tab' sc_id=sc_data.id %}
+                                {% get_table_spindle sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="completing" role="tabpanel" aria-labelledby="completing-tab">
+                                {% include 'repairshop/templatetags/templates_field.html' with label="completing_tpl" term=form.completing_time tpl=form.completing_tpl all_complete=form.complete_completing js="fill_tabs('id_completing_tpl')" update_urls='production:update-completing-tab' sc_id=sc_data.id %}
+                                {% get_table_completing sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="assembly" role="tabpanel" aria-labelledby="assembly-tab">
+                                {% include 'repairshop/templatetags/templates_field.html' with label="assembly_tpl" term=form.assembly_time tpl=form.assembly_tpl all_complete=form.complete_assembly js="fill_tabs('id_assembly_tpl')" update_urls='production:update-assembly-tab' sc_id=sc_data.id %}
+                                {% get_table_assembly sc_data.id %}
+                            </div>
+                            <div class="tab-pane fade" id="investments" role="tabpanel" aria-labelledby="investments-tab">
+                                {% include 'repairshop/templatetags/templates_field.html' with update_urls='production:update-investments-tab' sc_id=sc_data.id %}
+                                {% get_table_investments sc_data.id %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% load bootstrap4 %}
+
+<div class="row">
+    <div class="col-11">
+        <div class="row">
+            {% if stage %}
+                <div class="col-3 border-right p-2">
+                    <div class="row">
+                        <div class="col-3">Стадия</div>
+                        <div class="col-9">{% bootstrap_field stage layout='inline' %}</div>
+                    </div>
+                </div>
+            {% endif %}
+            {% if term %}
+                <div class="col-3 border-right p-2">
+                    <div class="row">
+                        <div class="col-3">Срок</div>
+                        <div class="col-9">{% bootstrap_field term layout='inline' %}</div>
+                    </div>
+                </div>
+            {% endif %}
+            {% if tpl %}
+                <div class="col-4 border-right p-2">
+                    <div class="row">
+                        <div class="col-3">Шаблон</div>
+                        <div class="col-6">{% bootstrap_field tpl layout='inline' placeholder='Выберите шаблон' %}</div>
+                        <div class="col-3"><button class="btn btn-secondary" type="button" onclick="{{ js }}" style="height: 38px;">Импорт</button></div>
+                    </div>
+                </div>
+            {% endif %}
+            {% if all_complete %}
+                <div class="col-2 pt-2">{% bootstrap_field all_complete layout='inline' show_label=False %}</div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-1">
+        <div class="float-right">
+            <a href="{% url update_urls sc_id %}" class="btn btn-link">
+                <i class="fa fa-pencil-square-o fa-3x" aria-hidden="true" title="Редактировать" style="color: #73879C"></i>
+            </a>
+        </div>
+    </div>
+</div>
+

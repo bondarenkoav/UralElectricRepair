@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load bootstrap4 personal_tags dashboard_tags tasks_tags %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="x_panel">
+                <div class="x_content">
+                    <div class="container" style="position: relative; z-index: 1; margin-top: -17px; margin-bottom: 20px;">
+                        <table class="table table-striped" id="datatable">
+                            <thead>
+                                <tr class="text-center">
+                                    <th style="width: 5%;">№</th>
+                                    <th style="width: 35%;">Задача</th>
+                                    <th style="width: 10%;">Срок исполнения</th>
+                                    <th style="width: 10%;">Параметры</th>
+                                    <th style="width: 15%;">Тип</th>
+                                    <th style="width: 15%;">Исполнитель</th>
+                                    <th style="width: 10%;">Автор</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in tasks %}
+                                    <tr id="obj_{{ item.id }}" onclick="location.href = '{% url 'tasks:getitem-task' item.id %}';">
+                                        <th scope="row" class="text-center"><h2>{{ item.id }}</h2></th>
+                                        <td>{{ item.title }} - {{ item.description }}</td>
+                                        <td class="text-center">{% if item.date_limit %}{{ item.date_limit|date:"d.m.Y" }}{% else %}---{% endif %}</td>
+                                        <td class="text-center">{{ item.model_name }}<br/>{{ item.task_name }}<br/>id={{ item.record_id }}</td>
+                                        <td class="text-center">
+                                            {% if item.status %}{{ item.status }}
+                                            {% elif item.task_name == 'verificationpassed' %}Задание прошло проверку
+                                            {% else %}---
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">
+                                            {% if item.executor %}
+                                                {{ item.executor }}
+                                            {% else %}
+                                                {{ item.group_executor }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">{{ item.author }} <br/><small>{{ item.datetime_add }}</small></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{#{% block pagination %}{% endblock %}#}

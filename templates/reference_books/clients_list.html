@@ -1,0 +1,29 @@
+{% extends 'reference_books/../container.html' %}
+{% load paginator_tags %}
+
+{% block page_title %}Список контрагентов{% endblock %}
+{% block add_object_name %}контрагента{% endblock %}
+
+{% block table_head %}
+    <td style="width: 10%;">№ п/п</td>
+    <td style="width: 10%;">Тип</td>
+    <td style="width: 50%;">Наименование</td>
+    <td style="width: 15%;">ИНН</td>
+    <td style="width: 15%;">КПП</td>
+{% endblock %}
+
+{% block table_body %}
+    {% for item in list %}
+        <tr id="obj_{{ item.id }}" onclick="location.href = '{% url 'rbooks:update_client' item.id %}';">
+            <td class="text-center">{{ item.id }}</td>
+            <td class="text-center">{{ item.type }}</td>
+            <td class="text-right">{{ item.name }}</td>
+            <td class="text-center">{{ item.inn }}</td>
+            <td class="text-center">{{ item.kpp }}</td>
+        </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block pagination %}
+    {% rb_pagination list_clients 'reference_books' 'getlist_clients' %}
+{% endblock %}

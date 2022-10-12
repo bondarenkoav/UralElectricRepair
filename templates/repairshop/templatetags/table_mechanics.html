@@ -1,0 +1,78 @@
+{% load repairshop_tags %}
+
+<div>
+    <table class="table table-sm">
+        <thead>
+            <tr class="text-center">
+                <th style="width: 5%;" rowspan="2">#</th>
+                <th style="width: 15%;" rowspan="2">Наименование работ</th>
+                <th style="width: 5%;" rowspan="2">0<sup>0</sup></th>
+                <th style="width: 5%;" rowspan="2">120<sup>0</sup></th>
+                <th style="width: 5%;" rowspan="2">240<sup>0</sup></th>
+                <th style="width: 10%;">Диаметр посадочного места, мм</th>
+                <th style="width: 5%;" rowspan="2">Срок выполнения</th>
+                <th style="width: 10%;">Исполнитель</th>
+                <th style="width: 10%;">Ответственный</th>
+                <th style="width: 5%;" rowspan="2">Результат</th>
+                <th style="width: 10%;" rowspan="2">Фото</th>
+                <th style="width: 15%;" rowspan="2">Замечание</th>
+            </tr>
+            <tr class="text-center">
+                <th>Материал</th>
+                <th>Дата и время</th>
+                <th>Дата и время</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in table_data %}
+                <tr class="formset_row p-0 m-0 {% if item.complete == True and item.result.slug == None %}table-warning{% elif item.result.slug == 'accepted' %}table-success{% elif item.result.slug == 'reject' %}table-danger{% elif item.result.slug == 'modification' %}table-warning{% endif %}">
+                    <td class="text-center">{{ forloop.counter }}</td>
+                    <td class="text-center">{{ item.name }}</td>
+                    <td class="text-center">{{ item.degrees_0|default_if_none:"" }}</td>
+                    <td class="text-center">{{ item.degrees_120|default_if_none:"" }}</td>
+                    <td class="text-center">{{ item.degrees_240|default_if_none:"" }}</td>
+                    <td class="text-center">
+                        {{ item.seat_diameter|default_if_none:"" }}<hr/>
+                        {{ item.material|default_if_none:"" }}
+                    </td>
+                    <td class="text-center">{{ item.date_due|date:"d.m.Y" }}</td>
+                    <td class="text-center">
+                        {% for fio in item.executor.all %}
+                            {% if forloop.counter > 1 %}, {% endif %}{{ fio }}
+                        {% empty %}
+                            <span class="h4">нет</span>
+                        {% endfor %}<hr/>
+                        {% if item.complete %}
+                            {{ item.date_complete }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if item.receiving %}
+                            {{ item.receiving }}
+                        {% elif item.group_receiving %}
+                            {{ item.group_receiving }}
+                        {% else %}
+                            <span class="h4">нет</span>
+                        {% endif %}<hr/>
+                        {% if item.date_receiving %}
+                            {{ item.date_receiving|date:"d.m.Y" }} {{ item.date_receiving|time:"H:i" }}
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if item.result %}
+                            {{ item.result }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if item.photo %}
+                            <a href="{% url 'production:get-file' 'mechanics' item.id %}" target="_blank">
+                                {% get_icon_file_ext item.photo.url %}
+                            </a>
+                        {% endif %}
+                    </td>
+                    <td>{{ item.comment|default_if_none:"" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

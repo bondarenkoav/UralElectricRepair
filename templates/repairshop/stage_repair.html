@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% load static bootstrap4 %}
+
+{% block page_title %}Процесс ремонта. <small>{{ eq_data.datetime_add|date:'d.m.Y' }}. Заказчик {{ eq_data.shipment.client }}</small>{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <form action="{% url 'production:get_stagerepair' eq_data.id %}" method="post" class="form">{% csrf_token %}
+            <div class="col-md-12">
+                <div class="x_panel">
+                    <div class="x_content">
+                        {% bootstrap_messages %}
+                        {% bootstrap_form_errors parent_form %}
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-2 border border-light">
+                                    <div class="row p-2">
+                                        <div class="col-12"><strong>Стадия производства</strong></div>
+                                        <div class="col-12">{{ parent.stage }}</div>
+                                        <div class="col-12"><strong>{% bootstrap_label "Отв.исполнитель" label_for="executor" %}</strong></div>
+                                        <div class="col-12">{{ parent.executor }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-2 border border-light">
+                                    <div class="row p-2">
+                                        <div class="col-12"><strong>Модель оборудования</strong></div>
+                                        <div class="col-12">{{ parent.equipment }}</div>
+                                        <div class="col-12">
+                                            <dl class="row">
+                                                <dt class="col-sm-3">Ток</dt><dd class="col-sm-9">{{ parent.equipment.amperage }}</dd>
+                                                <dt class="col-sm-3">U</dt><dd class="col-sm-9">{{ parent.equipment.u }}</dd>
+                                                <dt class="col-sm-3">n</dt><dd class="col-sm-9">{{ parent.equipment.n }}</dd>
+                                                <dt class="col-sm-3">P</dt><dd class="col-sm-9">{{ parent.equipment.p }}</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2 border border-light">
+                                    <div class="row p-2">
+                                        <div class="col-12">Срочность</div>
+                                        <div class="col-12">{{ parent_form.urgency }}</div>
+                                        <div class="col-12">Месяц</div>
+                                        <div class="col-12">{{ parent_form.shedulemonth }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-2 border border-light">
+                                    <div class="row p-2">
+                                        <div class="col-12">{% bootstrap_label "Участок" label_for="section" %}</div>
+                                        <div class="col-12">{% bootstrap_field parent_form.section layout='inline' %}</div>
+                                        <div class="col-12"> {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary float-right" %}</div>
+                                    </div>
+                                </div>
+                                <div class="col-4 border border-light">
+                                    <div class="row p-2">
+                                        <div class="col-3">
+                                            {% bootstrap_label "Комментарии" label_for="comments" %}
+                                        </div>
+                                        <div class="col-9">
+                                            {% bootstrap_field parent_form.comment layout='inline' %}
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        {% include 'repairshop/templatetags/comments.html' with list=comments %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="x_panel">
+                    <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="troubleshooting-tab" data-toggle="tab" href="#troubleshooting" role="tab"
+                               aria-controls="troubleshooting" aria-selected="true">Дефектовка</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="store-tab" data-toggle="tab" href="#store" role="tab"
+                               aria-controls="store" aria-selected="false">Склад</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="poles-tab" data-toggle="tab" href="#poles" role="tab"
+                               aria-controls="poles" aria-selected="false">Полюса</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="sections-tab" data-toggle="tab" href="#sections" role="tab"
+                               aria-controls="sections" aria-selected="true">Секции</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="inductor-tab" data-toggle="tab" href="#inductor" role="tab"
+                               aria-controls="inductor" aria-selected="false">Индуктор</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="anchor-tab" data-toggle="tab" href="#anchor" role="tab"
+                               aria-controls="anchor" aria-selected="false">Якорь</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="shields-tab" data-toggle="tab" href="#shields" role="tab"
+                               aria-controls="shields" aria-selected="false">Щиты</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="spindle-tab" data-toggle="tab" href="#spindle" role="tab"
+                               aria-controls="spindle" aria-selected="false">Вал</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="completing-tab" data-toggle="tab" href="#completing" role="tab"
+                               aria-controls="completing" aria-selected="true">Комплектующие</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="assembly-tab" data-toggle="tab" href="#assembly" role="tab"
+                               aria-controls="assembly" aria-selected="false">Вложения</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="investments-tab" data-toggle="tab" href="#investments" role="tab"
+                               aria-controls="investments" aria-selected="false">Сборка</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="troubleshooting"
+                             role="tabpanel" aria-labelledby="troubleshooting-tab">
+                        <div class="col-md-12">
+                            <div class="x_panel">
+                                <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="faultdetection-tab" data-toggle="tab"
+                                           href="#faultdetection" role="tab" aria-controls="faultdetection"
+                                           aria-selected="true">Дефектация</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="mechanics-tab" data-toggle="tab"
+                                           href="#mechanics" role="tab" aria-controls="mechanics"
+                                           aria-selected="false">Механика</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="tests-tab" data-toggle="tab"
+                                           href="#tests" role="tab" aria-controls="tests"
+                                           aria-selected="false">Испытания</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="faultdetection" role="tabpanel"
+                                         aria-labelledby="troubleshooting-tab">
+                                        {% include 'repairshop/templatetags/old/faultdetection.html' with formset=fd_formset %}
+                                    </div>
+                                    <div class="tab-pane fade" id="mechanics" role="tabpanel"
+                                         aria-labelledby="mechanics-tab">
+                                        {% include 'repairshop/templatetags/old/mechanics.html' with formset=mechanics_formset %}
+                                    </div>
+                                    <div class="tab-pane fade" id="tests" role="tabpanel"
+                                         aria-labelledby="tests-tab">
+                                        {% include 'repairshop/templatetags/old/tests.html' with formset=tests_formset %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="store" role="tabpanel" aria-labelledby="store-tab">
+{#                            {% include 'repairshop/templatetags/store.html' with formset=store_formset %}#}
+                        </div>
+                        <div class="tab-pane fade" id="poles" role="tabpanel" aria-labelledby="poles-tab">
+{#                            {% include 'repairshop/templatetags/components.html' with formset=components_formset %}#}
+                        </div>
+                        <div class="tab-pane fade" id="sections" role="tabpanel" aria-labelledby="sections-tab">
+                        </div>
+                        <div class="tab-pane fade" id="inductor" role="tabpanel" aria-labelledby="inductor-tab">
+                        </div>
+                        <div class="tab-pane fade" id="anchor" role="tabpanel" aria-labelledby="anchor-tab">
+                        </div>
+                        <div class="tab-pane fade" id="shields" role="tabpanel" aria-labelledby="shields-tab">
+                            Щиты
+                        </div>
+                        <div class="tab-pane fade" id="spindle" role="tabpanel" aria-labelledby="spindle-tab">
+                            Вал
+                        </div>
+                        <div class="tab-pane fade" id="completing" role="tabpanel" aria-labelledby="completing-tab">
+                            Комплектующие
+                        </div>
+                        <div class="tab-pane fade" id="assembly" role="tabpanel" aria-labelledby="assembly-tab">
+                            Вложения
+                        </div>
+                        <div class="tab-pane fade" id="investments" role="tabpanel" aria-labelledby="investments-tab">
+                            Сборка
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

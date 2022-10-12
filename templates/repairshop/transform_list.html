@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static bootstrap4 %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="x_panel">
+                <div class="x_content">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th colspan="3"></th>
+                                <th>Разборка</th>
+                                <th>Дефектовка</th>
+                                <th>Склад</th>
+                                <th>Катушки</th>
+                                <th>Активная часть</th>
+                                <th>Бак</th>
+                                <th>Комплектующие</th>
+                                <th>Сборка</th>
+                                <th>Окрашивание и консервация</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in list %}
+                                <tr>
+                                    <th scope="row">Поступило: {{ item.shipment.dateshipment|date:"d.m.Y" }}</th>
+                                    <th scope="row" colspan="2">Готово: {{ item.dateready|date:"d.m.Y" }}</th>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" rowspan="3">
+                                        {{ item.shipment.client.name }}<br/>
+                                        ИНН: {{ item.shipment.client.inn }}
+                                        {% if item.shipment.client.type == 'company' %}<br/>КПП: {{ item.shipment.client.kpp }}{% endif %}
+                                    </th>
+                                    <td>№{{ item.repairnum }}</td>
+                                    <td>P={{ item.equipment.p }}</td>
+                                    <td rowspan="3"></td>
+                                    <td rowspan="3"></td>
+                                    <td rowspan="3"></td>
+                                    <td rowspan="3"></td>
+                                    <td rowspan="3"></td>
+                                    <td rowspan="3"></td>
+                                    <td rowspan="3"></td>
+                                    <td rowspan="3"></td>
+                                    <td rowspan="3"></td>
+                                </tr>
+                                <tr>
+                                    <th rowspan="2">{{ item.equipment.name }}</th>
+                                    <td>Uнн={{ item.equipment.unn }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Uвн={{ item.equipment.uvn }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

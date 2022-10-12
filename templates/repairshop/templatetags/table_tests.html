@@ -1,0 +1,44 @@
+{% load repairshop_tags %}
+
+<div>
+    <table class="table table-sm">
+        <thead>
+            <tr class="text-center">
+                <th style="width: 5%;">#</th>
+                <th style="width: 10%;">Показания</th>
+                <th style="width: 15%;">Статор</th>
+                <th style="width: 15%;">Тип беличья клетка ротора<br/>(литой, сварной)</th>
+                <th style="width: 15%;">Токосъёмные кольца</th>
+                <th style="width: 5%;">Срок выполнения</th>
+                <th style="width: 15%;">Исполнитель</th>
+                <th style="width: 10%;" rowspan="2">Результат</th>>
+                <th style="width: 10%;">Фото</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in table_data %}
+                <tr class="formset_row p-0 m-0 {% if item.complete == True %}table-success{% endif %}">
+                    <td class="text-center">{{ forloop.counter }}</td>
+                    <td>{{ item.indications }}</td>
+                    <td>{{ item.stator|default_if_none:"" }}</td>
+                    <td>{{ item.rotor_cage|default_if_none:"" }}</td>
+                    <td>{{ item.rings|default_if_none:"" }}</td>
+                    <td>{{ item.date_due|date:"d.m.Y" }}</td>
+                    <td>
+                        {% for fio in item.executor.all %}
+                            {% if forloop.counter > 1 %}, {% endif %}{{ fio }}
+                        {% empty %}
+                            <span class="h4">нет</span>
+                        {% endfor %}
+                    </td>
+                    <td>{{ item.date_complete|date:"d.m.Y" }} {{ item.date_complete|time:"H:i" }}</td>
+                    {% if item.photo %}
+                        <a href="{% url 'production:get-file' 'faultdetection' item.id %}" target="_blank">
+                            {% get_icon_file_ext item.photo.url %}
+                        </a>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

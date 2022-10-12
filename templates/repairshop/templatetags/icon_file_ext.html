@@ -1,0 +1,11 @@
+{% if ext == '.jpg' or ext == '.jpeg' or ext == '.png' %}
+    <i class="fa fa-file-image-o fa-2x" aria-hidden="true"></i>
+{% elif ext == '.doc' or ext == '.docx' or ext == '.odt' %}
+    <i class="fa fa-file-word-o fa-2x" aria-hidden="true"></i>
+{% elif ext == '.xls' or ext == '.xlsx' %}
+    <i class="fa fa-file-excel-o fa-2x" aria-hidden="true"></i>
+{% elif ext == '.pdf' %}
+    <i class="fa fa-file-pdf-o fa-2x" aria-hidden="true"></i>
+{% else %}
+    <i class="fa fa-file-o fa-2x" aria-hidden="true"></i>
+{% endif %}

@@ -1,0 +1,58 @@
+{% load static dashboard_tags bootstrap4 %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>УралЭлектроРемонт</title>
+
+        <!-- Bootstrap -->
+        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+        <!-- Font Awesome -->
+        <link href="{% static 'css/font-awesome.css' %}" rel="stylesheet">
+        <!-- NProgress -->
+        <link href="{% static 'css/nprogress.css' %}" rel="stylesheet">
+        <!-- Animate.css -->
+        <link href="{% static 'css/animate.min.css' %}" rel="stylesheet">
+        <!-- Custom Theme Style -->
+        <link href="{% static 'css/custom.min.css' %}" rel="stylesheet">
+    </head>
+
+    <body class="login">
+        <div>
+            <a class="hiddenanchor" id="signup"></a>
+
+            <div class="login_wrapper">
+                <div class="animate form login_form">
+                    <section class="login_content">
+                        <form class="form-horizontal m-t-20" action="{% url 'login' %}" method="post">
+                            {% csrf_token %}
+                            {% bootstrap_form_errors form %}
+                            <h1>Авторизация</h1>
+                            <div>
+                                {% bootstrap_field form.username layout='inline' %}
+                            </div>
+                            <div>
+                                {% bootstrap_field form.password layout='inline' %}
+                            </div>
+                            <div>
+                                {% bootstrap_button "Войти" button_type="submit" button_class="btn btn-link" %}
+                                <a class="reset_pass" href="#">Lost your password?</a>
+                            </div>
+                            <div>
+                                <h1><i class="fa fa-bolt"></i> РемФОНД</h1>
+                                <p>©{% current_year %} Все права принадлежат ОАО Концерн "УРАЛЭЛЕКТОРЕМОНТ".</p>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+
+              <div class="clearfix"></div>
+            </div>
+        </div>
+    </body>
+</html>

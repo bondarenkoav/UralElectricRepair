@@ -1,0 +1,54 @@
+{% extends 'mobile/base_mobile.html' %}
+{% load mobile_tags personal_tags bootstrap4 %}
+
+{% block page_title %}Задачи для {{ curr_user|view_shortfio_user }}{% endblock %}
+
+{% block content %}
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-link {% if archive %}{% else %}active{% endif %}" id="nav-task-tab" data-toggle="tab" href="#nav-task" role="tab" aria-controls="nav-task" aria-selected="true">Текущие задачи</a>
+            <a class="nav-link {% if archive %}active{% endif %}" id="nav-archive-tab" data-toggle="tab" href="#nav-archive" role="tab" aria-controls="nav-archive" aria-selected="false">Архив задач</a>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade {% if archive %}{% else %}show active{% endif %}" id="nav-task" role="tabpanel" aria-labelledby="nav-task-tab">
+            <div class="x_content table-responsive">
+                <div class="list-group">
+                    {% for item in tasks %}
+                        <a href="{% url 'mobile:getitem_task' item.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ item.title }}</h5>
+                                <small>{% if item.date_limit %}{{ item.date_limit }}{% endif %}</small>
+                            </div>
+                            <p class="mb-1">{{ item.description }}</p>
+                            <small>{% if complete %}Выполнено{% else %}Не выполнено{% endif %}</small>
+                        </a>
+{#                        {% get_mobiletask_list_tag item %}#}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade {% if archive %}show active{% endif %}" id="nav-archive" role="tabpanel" aria-labelledby="nav-archive-tab">
+            <h3>Введите даты</h3>
+            {% bootstrap_form_errors form_archive %}
+            <form action="{% url 'mobile:getlist-executor-tasks' %}" method="post" class="form">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-5">{% bootstrap_field form_archive.start_period layout='inline' %}</div>
+                    <div class="col-5">{% bootstrap_field form_archive.end_period layout='inline' %}</div>
+                    <div class="col-2">
+                        <button class="btn btn-default" type="submit">
+                            <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <hr/>
+            {% if archive %}
+                {% for item in archive %}
+                    {% get_archive_list_tag item %}
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

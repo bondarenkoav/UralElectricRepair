@@ -1,0 +1,131 @@
+{% extends 'page_filterlist.html' %}
+{% load repairshop_tags bootstrap4 %}
+
+{% block filters_form %}
+    {% bootstrap_form list_filter.form layout='horizontal' horizontal_label_class='col-md-4' horizontal_field_class='col-md-8' show_help=False  %}
+{% endblock %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="x_panel pl-0 pr-0">
+        <div class="x_content">
+            <table class="table table-bordered table-sm">
+                <thead>
+                    <tr class="text-center">
+                        <th style="width: 8%">Поступило</th>
+                        <th style="width: 8%">Готово</th>
+                        <th style="width: 7%">Разборка</th>
+                        <th style="width: 7%">Дефектовка</th>
+                        <th style="width: 7%">Склад</th>
+                        <th style="width: 7%">Полюса</th>
+                        <th style="width: 7%">Секции</th>
+                        <th style="width: 7%">
+                            {% if type == 'steady' %}Индуктор{% else %}Статор{% endif %}
+                        </th>
+                        <th style="width: 7%">
+                            {% if type == 'steady' %}Якорь{% else %}Ротор{% endif %}
+                        </th>
+                        <th style="width: 7%">Щит</th>
+                        <th style="width: 7%">Вал</th>
+                        <th style="width: 7%">Комплектующие</th>
+                        <th style="width: 7%">Сборка</th>
+                        <th style="width: 7%">Окрашивание и консервация</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in list %}
+                        <tr class="text-center">
+                            <th scope="row">{{ item.shipment.dateshipment|date:'d.m.Y' }}</th>
+                            <th scope="row">{{ item.shipment.dateready|date:'d.m.Y' }}</th>
+                            <td>{{ item.disassembly_time|date:'d.m.Y'|default_if_none:"нет" }}</td>
+                            <td>{{ item.faultdetection_time|date:'d.m.Y'|default_if_none:"нет" }}</td>
+                            <td>{{ item.storage_time|date:'d.m.Y'|default_if_none:"нет" }}</td>
+                            <td>{{ item.poles_time|date:'d.m.Y'|default_if_none:"нет" }}</td>
+                            <td>{{ item.sections_time|date:'d.m.Y'|default_if_none:"нет" }}</td>
+                            <td>{{ item.inductor_time|date:'d.m.Y'|default_if_none:"нет" }}</td>
+                            <td>{{ item.anchor_time|date:'d.m.Y'|default_if_none:"нет" }}</td>
+                            <td>{{ item.shields_time|date:'d.m.Y'|default_if_none:"нет" }}</td>
+                            <td>{{ item.spindle_time|date:'d.m.Y'|default_if_none:"нет" }}</td>
+                            <td>{{ item.completing_time|date:'d.m.Y'|default_if_none:"нет" }}</td>
+                            <td>{{ item.assembly_time|date:'d.m.Y'|default_if_none:"нет" }}</td>
+                            <td>{{ item.conservation_time|date:'d.m.Y'|default_if_none:"нет" }}</td>
+                        </tr>
+                        <tr id="obj_{{ object.id }}" onclick="location.href = '{% url 'production:scopeshipment-update' item.pk %}';">
+                            <th scope="row" rowspan="2">
+                                <p class="h5">PH №{{ item.repairnum }}</p>
+                                <p class="text-muted">{{ item.shipment.client }}</p>
+                            </th>
+                            <td style="width: 5%">
+                                <span class="h5">{{ item.equipment.name }}</span><br/>
+                            </td>
+                            <td rowspan="2" class="{% get_techprocess_fieldcolor 'disassembly' item %}">
+                                {% get_techprocess_fielddata 'disassembly' 'name' item as ds_lasttask %}
+                                {{ ds_lasttask }}
+                            </td>
+                            <td rowspan="2" class="{% get_techprocess_fieldcolor 'faultdetection' item %}">
+                                {% get_techprocess_fielddata 'faultdetection' 'name' item as fd_lasttask %}
+                                {{ fd_lasttask }}
+                            </td>
+                            <td rowspan="2" class="{% get_techprocess_fieldcolor 'storage' item %}">
+                                {% get_techprocess_fielddata 'storage' 'name' item as m_lasttask %}
+                                {{ m_lasttask }}
+                            </td>
+                            <td rowspan="2" class="{% get_techprocess_fieldcolor 'poles' item %}">
+                                {% get_techprocess_fielddata 'poles' 'name' item as poles_lasttask %}
+                                {{ poles_lasttask }}
+                            </td>
+                            <td rowspan="2" class="{% get_techprocess_fieldcolor 'sections' item %}">
+                                {% get_techprocess_fielddata 'sections' 'name' item as sections_lasttask %}
+                                {{ sections_lasttask }}
+                            </td>
+                            <td rowspan="2" class="{% get_techprocess_fieldcolor 'inductor' item %}">
+                                {% get_techprocess_fielddata 'inductor' 'name' item as inductor_lasttask %}
+                                {{ inductor_lasttask }}
+                            </td>
+                            <td rowspan="2" class="{% get_techprocess_fieldcolor 'anchor' item %}">
+                                {% get_techprocess_fielddata 'anchor' 'name' item as anchor_lasttask %}
+                                {{ anchor_lasttask }}
+                            </td>
+                            <td rowspan="2" class="{% get_techprocess_fieldcolor 'shields' item %}">
+                                {% get_techprocess_fielddata 'shields' 'name' item as shields_lasttask %}
+                                {{ shields_lasttask }}
+                            </td>
+                            <td rowspan="2" class="{% get_techprocess_fieldcolor 'spindle' item %}">
+                                {% get_techprocess_fielddata 'spindle' 'name' item as spindle_lasttask %}
+                                {{ spindle_lasttask }}
+                            </td>
+                            <td rowspan="2" class="{% get_techprocess_fieldcolor 'completing' item %}">
+                                {% get_techprocess_fielddata 'completing' 'name' item as cmp_lasttask %}
+                                {{ cmp_lasttask }}
+                            </td>
+                            <td rowspan="2" class="{% get_techprocess_fieldcolor 'assembly' item %}">
+                                {% get_techprocess_fielddata 'assembly' 'name' item as as_lasttask %}
+                                {{ as_lasttask }}
+                            </td>
+                            <td rowspan="2"></td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <dl class="row">
+                                    <dt class="col-sm-3">P</dt>
+                                    <dd class="col-sm-9">{{ item.equipment.p|default_if_none:0 }} <small class="text-muted"> кВт</small></dd>
+
+                                    <dt class="col-sm-3">U</dt>
+                                    <dd class="col-sm-9">{{ item.equipment.u|default_if_none:0 }} <small class="text-muted"> В</small></dd>
+
+                                    <dt class="col-sm-3">n</dt>
+                                    <dd class="col-sm-9">{{ item.equipment.n|default_if_none:0 }} <small class="text-muted"> об/мин</small></dd>
+                                </dl>
+                            </th>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block pagination %}
+    {% include 'templatetags/pagination.html' with page_obj=list %}
+{% endblock %}
